@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Processor Simulator</title>
+        <link href="StyleSheets/fonts.css" rel="stylesheet" />
+        <link href="StyleSheets/style.css" rel="stylesheet" />
+        <script type="text/javascript" src="Libraries/jquery-2.0.3.min.js"> </script>
+        <script type="text/javascript" src="Scripts/helpers.js"> </script>
+        <script type="text/javascript" src="Scripts/cpu.js"> </script>
+        <script type="text/javascript" src="Scripts/assembler.js"> </script>
+        <script type="text/javascript" src="Scripts/instructions.js"> </script>
+        <script type="text/javascript" src="Scripts/examples.js"> </script>
+        <script type="text/javascript" src="Libraries/watch.js"> </script>
+        <script type="text/javascript" src="Scripts/control.js"> </script>
+        <script type="text/javascript" src="Scripts/display.js"> </script>
+    </head>
+    <body>
+        <div id="topRectangle"> </div>
+        <div id="headerContent">
+            <h1>Simulator</h1>
+            <h2>By Hassan Munir</h2>
+        </div>
+        <div id="mainContent">
+            
+            <div id="topRow">
+                <div class="section leftMostSection">
+                    <h3>Registers</h3>
+                    <table id="registerTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>r0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r2</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r3</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r4</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r5</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r6</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r7</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>pc</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>eq</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>gt</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h3>Memory</h3>
+                    <table id="memoryTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>r0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r2</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r3</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r4</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r5</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r6</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r7</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>pc</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>eq</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>gt</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="section">
+                    <h3>Other</h3>
+                </div>
+
+                <div class="section rightMostSection" 
+                     id="assemblyInputDiv">
+                    <div>
+                        <textarea></textarea>
+                        <button id="executeButton">Execute</button>
+                        <button id="executeNextButton">Execute Next Instruction</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="consoleSeperator"> </div>
+            
+            <div class="section leftMostSection" id="console">
+                <h3>Console</h3>
+                <div> </div>
+            </div>
+
+            <div id="exampleSelectionDiv">
+                <select>
+                    <option>Make a selection</option>
+                    <optgroup label="Arithmetic Instructions">
+                        <option>ADD</option>
+                        <option>ADDI</option>
+                        <option>SUB</option>
+                        <option>SUBI</option>
+                    </optgroup>
+                    <optgroup label="Branch and Conditional Instructions">
+                        <option>CMP</option>
+                        <option>B</option>
+                        <option>BEQ</option>
+                        <option>BNE</option>
+                        <option>BGT</option>
+                        <option>BLT</option>
+                    </optgroup>
+                    <optgroup label="Memory Instructions">
+                        <option>MOV</option>
+                        <option>CPY</option>
+                        <option>LDR</option>
+                        <option>STR</option>
+                    </optgroup>
+                    <optgroup label="Benchmark Programs">
+                        <option>Simple while loop</option>
+                        <option>Euclidean Algorithm</option>
+                        <option>For loop with arrays</option>
+                    </optgroup>
+                </select>
+            </div>
+
+        </div>
+    </body>
+</html>

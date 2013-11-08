@@ -1,0 +1,81 @@
+﻿body { background-color: lightgray; }
+
+h1 { font-size: 3em; }
+
+h3 {
+     font-family: 'open_sansbold', Arial, sans-serif;
+    margin-bottom: 0.5em;
+}
+
+#topRectangle {
+    background-color: gray;
+    height: 16px;
+    width: 100%;
+}
+
+#headerContent {
+    background-color: mediumseagreen;
+    color: black;
+    font-family: 'bebas_neueregular', Arial, sans-serif;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+}
+
+#headerContent > h1 {
+    display: inline;
+    margin-left: 2.5%;
+}
+
+#headerContent > h2 {
+    display: inline;
+    margin-left: 1em;
+    margin-right: 2.5%;
+}
+
+#mainContent {
+    font-family: 'open_sansregular', Arial, sans-serif;
+    margin: auto;
+    width: 95%;
+}
+
+#topRow {
+    height: 350px;
+}
+.section {
+    display: inline-block;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    height: inherit;
+}
+
+.leftMostSection {
+    margin-left: 0%;
+}
+
+.rightMostSection {
+    margin-right: 0%;
+}
+
+.section > table { border-collapse: collapse;}
+
+.section > table th, .section > table td {
+    border-right: 1px solid black;
+    min-width: 5em;
+    text-align: left;
+}
+
+.section > table tr {
+    border-bottom: 1px solid black;
+}
+
+.section > table th:last-child, .section > table td:last-child { border-right: none; }
+
+.section > table tbody tr:last-child { border-bottom: none; }
+
+#consoleSeperator {
+    background-color: gray;
+    height: 2px ;
+    width: 100%;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
