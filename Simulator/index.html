@@ -4,15 +4,23 @@
         <title>Processor Simulator</title>
         <link href="StyleSheets/fonts.css" rel="stylesheet" />
         <link href="StyleSheets/style.css" rel="stylesheet" />
+        <link href="StyleSheets/console.css" rel="stylesheet"/>
         <script type="text/javascript" src="Libraries/jquery-2.0.3.min.js"> </script>
-        <script type="text/javascript" src="Scripts/helpers.js"> </script>
+        <!--<script type="text/javascript" src="Scripts/helpers.js"> </script>
         <script type="text/javascript" src="Scripts/cpu.js"> </script>
         <script type="text/javascript" src="Scripts/assembler.js"> </script>
         <script type="text/javascript" src="Scripts/instructions.js"> </script>
         <script type="text/javascript" src="Scripts/examples.js"> </script>
         <script type="text/javascript" src="Libraries/watch.js"> </script>
-        <script type="text/javascript" src="Scripts/control.js"> </script>
-        <script type="text/javascript" src="Scripts/display.js"> </script>
+        <script type="text/javascript" src="Scripts/control.js"> </script>-->
+        <!--<script type="text/javascript" src="Scripts/display.js"> </script>-->
+        <script type="text/javascript" src="TypeScript/Instructions.js"></script>
+        <script type="text/javascript" src="TypeScript/IExecutionUnit.js"></script>
+        <script type="text/javascript" src="TypeScript/ArithmeticLogicUnit.js"></script>
+        <script type="text/javascript" src="TypeScript/SimulatorConsole.js"></script>
+        <script type="text/javascript" src="TypeScript/TestScript.js"></script>
+
+
     </head>
     <body>
         <div id="topRectangle"> </div>
@@ -145,7 +153,36 @@
 
                 <div class="section rightMostSection" 
                      id="assemblyInputDiv">
+                    <h3>Control</h3>
                     <div>
+                        <select>
+                            <option>Make a selection</option>
+                            <optgroup label="Arithmetic Instructions">
+                                <option>ADD</option>
+                                <option>ADDI</option>
+                                <option>SUB</option>
+                                <option>SUBI</option>
+                            </optgroup>
+                            <optgroup label="Branch and Conditional Instructions">
+                                <option>CMP</option>
+                                <option>B</option>
+                                <option>BEQ</option>
+                                <option>BNE</option>
+                                <option>BGT</option>
+                                <option>BLT</option>
+                            </optgroup>
+                            <optgroup label="Memory Instructions">
+                                <option>MOV</option>
+                                <option>CPY</option>
+                                <option>LDR</option>
+                                <option>STR</option>
+                            </optgroup>
+                            <optgroup label="Benchmark Programs">
+                                <option>Simple while loop</option>
+                                <option>Euclidean Algorithm</option>
+                                <option>For loop with arrays</option>
+                            </optgroup>
+                        </select>
                         <textarea></textarea>
                         <button id="executeButton">Execute</button>
                         <button id="executeNextButton">Execute Next Instruction</button>
@@ -153,43 +190,12 @@
                 </div>
             </div>
 
-
             <div id="consoleSeperator"> </div>
             
             <div class="section leftMostSection" id="console">
                 <h3>Console</h3>
                 <div> </div>
-            </div>
-
-            <div id="exampleSelectionDiv">
-                <select>
-                    <option>Make a selection</option>
-                    <optgroup label="Arithmetic Instructions">
-                        <option>ADD</option>
-                        <option>ADDI</option>
-                        <option>SUB</option>
-                        <option>SUBI</option>
-                    </optgroup>
-                    <optgroup label="Branch and Conditional Instructions">
-                        <option>CMP</option>
-                        <option>B</option>
-                        <option>BEQ</option>
-                        <option>BNE</option>
-                        <option>BGT</option>
-                        <option>BLT</option>
-                    </optgroup>
-                    <optgroup label="Memory Instructions">
-                        <option>MOV</option>
-                        <option>CPY</option>
-                        <option>LDR</option>
-                        <option>STR</option>
-                    </optgroup>
-                    <optgroup label="Benchmark Programs">
-                        <option>Simple while loop</option>
-                        <option>Euclidean Algorithm</option>
-                        <option>For loop with arrays</option>
-                    </optgroup>
-                </select>
+                <button id="clearConsoleButton">Clear Console</button>
             </div>
 
         </div>

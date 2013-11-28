@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -51,6 +52,7 @@
     <Content Include="Scripts\instructions.js" />
     <Content Include="Libraries\jquery-2.0.3.min.js" />
     <Content Include="index.html" />
+    <Content Include="StyleSheets\console.css" />
     <Content Include="StyleSheets\fonts.css" />
     <Content Include="StyleSheets\style.css" />
     <Content Include="Libraries\watch.js" />
@@ -65,6 +67,7 @@
     <Content Include="Fonts\OpenSans-Italic-webfont.woff" />
     <Content Include="Fonts\OpenSans-Light-webfont.woff" />
     <Content Include="Fonts\OpenSans-Regular-webfont.woff" />
+    <Content Include="packages.config" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -72,7 +75,17 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="TypeScript\ArithmeticLogicUnit.ts" />
+    <TypeScriptCompile Include="TypeScript\assembly.ts" />
+    <TypeScriptCompile Include="TypeScript\cpu.ts" />
+    <TypeScriptCompile Include="TypeScript\SimulatorConsole.ts" />
+    <TypeScriptCompile Include="TypeScript\Instructions.ts" />
+    <TypeScriptCompile Include="TypeScript\TestScript.ts" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ProjectExtensions>

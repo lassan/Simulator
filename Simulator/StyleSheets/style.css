@@ -3,7 +3,7 @@
 h1 { font-size: 3em; }
 
 h3 {
-     font-family: 'open_sansbold', Arial, sans-serif;
+    font-family: 'open_sansbold', Arial, sans-serif;
     margin-bottom: 0.5em;
 }
 
@@ -38,25 +38,21 @@ h3 {
     width: 95%;
 }
 
-#topRow {
-    height: 350px;
-}
+#topRow { height: 350px; }
+
 .section {
-    display: inline-block;
+    display: inline-table;
+    height: inherit;
     margin-left: 2.5%;
     margin-right: 2.5%;
-    height: inherit;
+    max-width: 20%;
 }
 
-.leftMostSection {
-    margin-left: 0%;
-}
+.leftMostSection { margin-left: 0%; }
 
-.rightMostSection {
-    margin-right: 0%;
-}
+.rightMostSection { margin-right: 0%; }
 
-.section > table { border-collapse: collapse;}
+.section > table { border-collapse: collapse; }
 
 .section > table th, .section > table td {
     border-right: 1px solid black;
@@ -64,9 +60,7 @@ h3 {
     text-align: left;
 }
 
-.section > table tr {
-    border-bottom: 1px solid black;
-}
+.section > table tr { border-bottom: 1px solid black;}
 
 .section > table th:last-child, .section > table td:last-child { border-right: none; }
 
@@ -74,8 +68,18 @@ h3 {
 
 #consoleSeperator {
     background-color: gray;
-    height: 2px ;
-    width: 100%;
-    margin-top: 2em;
+    height: 2px;
     margin-bottom: 2em;
+    margin-top: 2em;
+    width: 100%;
 }
+
+#assemblyInputDiv div { }
+
+#assemblyInputDiv select,
+#assemblyInputDiv div textarea,
+#assemblyInputDiv div button { width: 100%; }
+
+.valueChanged { background-color: lightgreen }
+
+.valueNotChanged {background-color: transparent }

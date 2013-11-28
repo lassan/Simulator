@@ -2,6 +2,9 @@
 /// <reference path="~/Libraries/jquery-2.0.3.min.js" />
 /// <reference path="~/Scripts/helpers.js" />
 /// <reference path="~/Scripts/control.js" />
+/// <reference path="~/Libraries/watch.js" />
+/// <reference path="~/Scripts/assembler.js" />
+/// <reference path="~/Scripts/examples.js" />
 /// <summary>
 ///     global variables
 /// </summary>
@@ -11,7 +14,8 @@ var _cpu = Cpu.getInstance();
 $(document).ready(function () {
     $('#executeButton').click(ExecuteButtonClick);
     $('#executeNextButton').click(ExecuteNextInstructionButtonClick);
-    $("#exampleSelectionDiv select").change(OnExampleSelectionChange);
+    $('#clearConsoleButton').click(ClearConsole);
+    $("#assemblyInputDiv select").change(OnExampleSelectionChange);
 
     window.watch(_cpu.RegisterFile,
         ['r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'pc', 'eq', 'gt'],
@@ -23,6 +27,10 @@ $(document).ready(function () {
         function () {
             UpdateMemoryTable();
         });
+
+    WriteToConsole("This is a test", "error");
+    WriteToConsole("More testing!", "instrumentation");
+
 });
 
 function GetInstructions(assembly) {
@@ -90,11 +98,22 @@ function UpdateRegisterTable() {
     /// </summary>
     var $trs = $('#registerTable tbody tr');
     $trs.each(function (i, tr) {
-        var th = $(tr).find('th')[0];
-        var td = $(tr).find('td')[0];
-        var val = Cpu.getInstance().RegisterFile[th.innerText];
-        if (val != null)
-            $(td).text(val);
+        
+
+        var tds = $(tr).find('td');
+        
+        var newValue = Cpu.getInstance().RegisterFile[tds[0].innerText];
+        if (newValue == null)
+            return;
+        
+        var currentValue = $(tds[1]).text();
+
+        if (currentValue == newValue) {
+            return;
+        }
+
+        $(tds[1]).text(newValue);
+        $(tr).addClass("valueChanged");
     });
 }
 
@@ -116,4 +135,16 @@ function UpdateMemoryTable() {
         $tbody.append(tr);
     }
 
+}
+
+function WriteToConsole(text, type) {
+    
+    var line = "<span class=\"c_" + type +
+    "\">" + text + "</span><br/>";
+
+    $('#console div').append(line);   
+}
+
+function ClearConsole() {
+    $('#console div').text("");
 }

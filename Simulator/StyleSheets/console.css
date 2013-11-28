@@ -1,0 +1,26 @@
+﻿#console {
+    display: block;
+    width: 100%;
+    
+}
+
+#console div{
+    font-size: 0.8em;
+    margin-bottom: 2em;
+    height: 25em;
+    width: 100%;
+    overflow: auto;
+}
+
+.c_normal {
+    
+
+}
+
+.c_error {
+    color: red;
+}
+
+.c_instrumentation {
+    font-style: italic;
+}
