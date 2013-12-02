@@ -48,7 +48,7 @@
     <Content Include="Scripts\cpu.js" />
     <Content Include="Scripts\display.js" />
     <Content Include="Scripts\examples.js" />
-    <Content Include="Scripts\helpers.js" />
+    <TypeScriptCompile Include="TypeScript\helpers.ts" />
     <Content Include="Scripts\instructions.js" />
     <Content Include="Libraries\jquery-2.0.3.min.js" />
     <Content Include="index.html" />
@@ -77,9 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
-    <TypeScriptCompile Include="TypeScript\ArithmeticLogicUnit.ts" />
-    <TypeScriptCompile Include="TypeScript\assembly.ts" />
+    <TypeScriptCompile Include="TypeScript\ExecutionUnits.ts" />
+    <TypeScriptCompile Include="TypeScript\Assembler.ts" />
     <TypeScriptCompile Include="TypeScript\cpu.ts" />
+    <TypeScriptCompile Include="TypeScript\Pipeline.ts" />
     <TypeScriptCompile Include="TypeScript\SimulatorConsole.ts" />
     <TypeScriptCompile Include="TypeScript\Instructions.ts" />
     <TypeScriptCompile Include="TypeScript\TestScript.ts" />

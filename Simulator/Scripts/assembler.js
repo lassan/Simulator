@@ -31,8 +31,7 @@ function Assembler() {
         /// </summary>
         /// <param name="line">The line of assembly</param>
         /// <returns type="Array">Array of strings - each element contains a part of the instruction</returns>
-        var parts = line.split(' ');
-        return parts;
+        return line.split(' ');
     };
 
     this.ParseLabels = function(assembly) {
@@ -114,5 +113,4 @@ function Assembler() {
         instruction = new Instructions[instructionType](operands);
         return instruction;
     };
-
 }

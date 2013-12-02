@@ -1,21 +1,22 @@
-class Instruction {
-    public type: InstructionType;
-    constructor(public operands: string[]) { }
-}
+module Instructions {
+    export class InstructionBase {
+        public type: Type;
+        constructor(public operands: string[]) { }
+    }
 
-enum InstructionType {
-    Branch, Memory, Arithmetic
-}
+    export enum Type {
+        Branch, Memory, Arithmetic
+    }
 
-class MOV extends Instruction {
-    type = InstructionType.Memory;
-}
+    export class MOV extends InstructionBase {
+        type = Instructions.Type.Memory;
+    }
 
-class ADD extends Instruction {
-    type = InstructionType.Arithmetic;
-}
+    export class ADD extends InstructionBase {
+        type = Instructions.Type.Arithmetic;
+    }
 
-class ADDI extends Instruction {
-    type = InstructionType.Arithmetic;
+    export class ADDI extends InstructionBase {
+        type = Instructions.Type.Arithmetic;
+    }
 }
-
