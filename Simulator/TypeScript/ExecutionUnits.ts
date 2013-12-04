@@ -19,6 +19,11 @@ class ExecutionUnit {
 }
 
 class ArithmeticLogicUnit extends ExecutionUnit {
+    mov(): void {
+        this.delay = 1;
+        this.result = null;
+    }
+    
     add(): void {
         this.delay = 1;
         this.result = this.operands[0] + this.operands[1];    
@@ -49,12 +54,12 @@ class ArithmeticLogicUnit extends ExecutionUnit {
     }
 }
 
-class LoadStoreUnit extends ExecutionUnit {
+class Memory extends ExecutionUnit {
     load(): void {
         this.delay = 4;
     }
 
-    store(): void {
+    str(): void {
         this.delay = 4;
     }
 }

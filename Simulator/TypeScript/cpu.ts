@@ -8,6 +8,7 @@ class CPU {
     }
 
     private initialiseRegisterFile(): void {
+        this.RegisterFile = [];
         this.RegisterFile["r0"] = null;
         this.RegisterFile["r1"] = null;
         this.RegisterFile["r2"] = null;
@@ -27,7 +28,20 @@ class CPU {
     }
 
     private initialiseMemory(): void {
+        this.Memory = [];
         for (var i = 0; i < 16; i++)
             this.Memory[i] = null;
+    }
+
+    public incrementProgramCounter(): void {
+        this.RegisterFile["pc"]++;
+    }
+
+    public getProgramCounter() : number {
+        return this.RegisterFile["pc"];
+    }
+
+    public setProgramCounter(pc: number) :void {
+        this.RegisterFile["pc"] = pc;
     }
 }

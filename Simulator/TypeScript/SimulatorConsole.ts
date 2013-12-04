@@ -5,7 +5,7 @@ module SimulatorConsole {
     }
 
     export function write(text: string, type: PrintType): void {
-        var typeClass = getTypeClass(type);
+        var typeClass = GetTypeClass(type);
         var line = "<span class=\"" + typeClass +
             "\">" + text + "</span>";
 
@@ -14,7 +14,7 @@ module SimulatorConsole {
 
     export function writeLine(text: string, type: PrintType): void {
 
-        var typeClass = getTypeClass(type);
+        var typeClass = GetTypeClass(type);
         var line = "<span class=\"" + typeClass +
             "\">" + text + "</span><br/>";
 
@@ -25,22 +25,9 @@ module SimulatorConsole {
         $('#console div').text("");
     }
 
-    function getTypeClass(type: PrintType): string {
+    function GetTypeClass(type: PrintType): string {
         var typeClass: string = "c_";
 
-        switch (type) {
-            case PrintType.Error:
-                typeClass = typeClass.concat("error");
-                break;
-            case PrintType.Instrumentation:
-                typeClass = typeClass.concat("instrumentation");
-                break;
-            case PrintType.Normal:
-                typeClass = typeClass.concat("normal");
-                break;
-            default:
-                break;
-        }
-        return typeClass;
+        return typeClass.concat(SimulatorConsole.PrintType[type].toLowerCase());    
     }
 }

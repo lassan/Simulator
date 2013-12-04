@@ -83,7 +83,7 @@
     <TypeScriptCompile Include="TypeScript\Pipeline.ts" />
     <TypeScriptCompile Include="TypeScript\SimulatorConsole.ts" />
     <TypeScriptCompile Include="TypeScript\Instructions.ts" />
-    <TypeScriptCompile Include="TypeScript\TestScript.ts" />
+    <TypeScriptCompile Include="TypeScript\initialise.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" />
