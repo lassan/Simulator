@@ -4,20 +4,25 @@ class ExecutionUnit {
         this.setUnitType();
     }
 
-    setInstruction(operands: number[], operation: string): void {
+    setInstruction(operands: number[], operation: string, writeBackRegister: string): void {
         this.operands = operands;
         this.operation = operation;
+        this.writeBackRegister = writeBackRegister;
         this.result = null;
-        this.delay = null;
     }
 
-    execute(): void { this[this.operation.toLowerCase()](); }
+    execute(): void {
+        this[this.operation.toLowerCase()]();
+        this.free = false;
+    }
 
     getResult(): number { return this.result; }
 
     clockTick(): void {
         if (this.delay > 0)
             this.delay--;
+        if (this.delay == 0)
+            this.free = true;
     }
 
     setUnitType(): void { throw "Set name function not overridden"; }
@@ -25,18 +30,19 @@ class ExecutionUnit {
     toString(): string {
         return Instructions.Type[this.type] + ' - ' +
             'operation: ' + this.operation +
-            ', isFree: ' + this.isFree +
+            ', isFree: ' + this.free +
             ', delay: ' + this.delay +
             ', operands: ' + this.operands.toString() +
             ', result: ' + this.result;
     }
 
     public type : Instructions.Type;
-    public isFree : boolean = true;
+    public free : boolean = true;
     public delay : number;
     public operands : number[];
     public operation : string;
-    public result : number;
+    public result: number;
+    public writeBackRegister: string;
     }
 
 class ArithmeticUnit extends ExecutionUnit {

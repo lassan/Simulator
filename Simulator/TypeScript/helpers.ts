@@ -15,4 +15,8 @@
         else
             return false;
     }
+
+    export  function isNumber(n:any) :boolean {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
 }

@@ -46,6 +46,7 @@
     <Content Include="Scripts\assembler.js" />
     <Content Include="Scripts\control.js" />
     <Content Include="Scripts\cpu.js" />
+    <TypeScriptCompile Include="TypeScript\DecodeUnit.ts" />
     <TypeScriptCompile Include="TypeScript\examples.ts" />
     <TypeScriptCompile Include="TypeScript\helpers.ts" />
     <Content Include="Scripts\instructions.js" />

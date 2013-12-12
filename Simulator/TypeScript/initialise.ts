@@ -4,8 +4,13 @@
 /// <reference path="Assembler.ts"/>
 /// <reference path="cpu.ts"/>
 
-var _executionUnits: ExecutionUnit[];
 var _cpu: CPU;
+
+var _numAlu = 1;
+var _numLoadStore = 1;
+var _numBranch = 1;
+var _numDecode = 1;
+
 
 $(document).ready(function () {
 
@@ -22,32 +27,40 @@ function ExecuteButtonClick() {
     var assembler = new Assembler(input);
     var instructions = assembler.getInstructions();
 
-    var pipeline = new Pipeline(_cpu, instructions, getExecutionUnits());
+    var executionUnits = getExecutionUnits();
+    var decodeUnits = getDecodeUnits(executionUnits);
+
+    var pipeline = new Pipeline(_cpu, instructions, getExecutionUnits(), decodeUnits);
     pipeline.start();
 }
 
 function getExecutionUnits(): ExecutionUnit[]{
 
-    var numAlu = 1;
-    var numLoadStore = 1;
-    var numBranch = 1;
-
     var executionUnits : ExecutionUnit[] = [];
 
-    for (var i = 0; i < numAlu; i++) {
+    for (var i = 0; i < _numAlu; i++) {
         executionUnits.push(new ArithmeticUnit());
     }
-    for (var j = 0; j < numLoadStore; j++) {
+    for (var j = 0; j < _numLoadStore; j++) {
         var mUnit = new MemoryUnit();
         mUnit.setMemory(_cpu.Memory);
         executionUnits.push(mUnit);
     }
-    for (var k = 0; k < numBranch; k++) {
+    for (var k = 0; k < _numBranch; k++) {
         var bUnit = new BranchUnit();
         bUnit.setRegisterFile(_cpu.RegisterFile);
         executionUnits.push(bUnit);
     }
     return executionUnits;
+}
+
+function getDecodeUnits(executionUnits : ExecutionUnit[]): DecodeUnit[] {
+    var decodeUnits: DecodeUnit[] = [];
+    for (var i = 0; i < _numDecode; i++) {
+        var dUnit = new DecodeUnit(executionUnits, _cpu.RegisterFile);
+        decodeUnits.push(dUnit);
+    }
+    return decodeUnits;
 }
 
 function exampleSelected(event) {
@@ -58,7 +71,7 @@ function exampleSelected(event) {
     /// </summary>
     var exampleName = event.target.value;
     var textToInsert;
-    if (_examples[exampleName] == undefined)
+    if (_examples[exampleName] == null)
         textToInsert = "There is no corresponding example. Sorry!";
     else
         textToInsert = _examples[exampleName].assembly;

@@ -11,14 +11,14 @@ class Assembler {
         this._labels = [];
     }
 
-    public getInstructions(): Instructions.InstructionBase[]{
+    public getInstructions(): Instructions.Instruction[]{
         /// <summary>
         ///     Creates instruction objects from assembly text
         /// </summary>
         /// <param name="assembly">The assembly text from which to create instruction objects</param>
         /// <returns type="Array">Array of instructions</returns>
         var lines = this.parse();
-        var instructions : Instructions.InstructionBase[] = [];
+        var instructions : Instructions.Instruction[] = [];
 
         for (var i = 0; i < lines.length; i++) {
 
@@ -80,7 +80,7 @@ class Assembler {
         } else return false;
     }
 
-    private createInstruction(parts: string[]): Instructions.InstructionBase {
+    private createInstruction(parts: string[]): Instructions.Instruction {
         /// <summary>
         ///     Creates and instruction object from an array of parts of the instruction
         /// </summary>
