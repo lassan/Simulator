@@ -3,8 +3,7 @@ class CPU {
     public Memory: number[];
 
     constructor() {
-        this.initialiseRegisterFile();
-        this.initialiseMemory();
+        this.reset();
     }
 
     private initialiseRegisterFile(): void {
@@ -25,6 +24,11 @@ class CPU {
         this.RegisterFile["r13"] = null;
         this.RegisterFile["pc"] = 0;
         this.RegisterFile["st"] = null;
+    }
+
+    public reset(): void {
+        this.initialiseRegisterFile();
+        this.initialiseMemory();
     }
 
     private initialiseMemory(): void {

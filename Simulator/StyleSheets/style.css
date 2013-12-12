@@ -38,7 +38,7 @@ h3 {
     width: 95%;
 }
 
-#topRow { height: 350px; }
+#topRow {  }
 
 .section {
     display: inline-table;
@@ -46,6 +46,12 @@ h3 {
     margin-left: 2.5%;
     margin-right: 2.5%;
     max-width: 20%;
+}
+
+.section textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .leftMostSection { margin-left: 0%; }

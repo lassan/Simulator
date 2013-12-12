@@ -1,11 +1,23 @@
 ﻿var _examples = {};
 
+_examples["MOV"] = {
+    assembly:
+        "MOV r0 42\n" +
+            "MOV r1 42\n" +
+            "MOV r2 84\n",
+    assertions: {
+        "r0": 42,
+        "r1": 42,
+        "r2": 84
+    }
+};
+
 _examples["ADD"] =
 {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 42 r1\n" +
-            "ADD r0 r1 r2\n",
+        "MOV r0 42\n" +
+            "MOV r1 42\n" +
+            "ADD r2 r1 r0",
     assertions: {
         "r2": 84
     }
@@ -13,8 +25,8 @@ _examples["ADD"] =
 
 _examples["ADDI"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "ADDI 42 r0 r1",
+        "MOV r0 42\n" +
+            "ADDI r1 r0 42",
     assetions: {
         "r1": 84
     }
@@ -22,11 +34,11 @@ _examples["ADDI"] = {
 
 _examples["SUB"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 84 r1\n" +
-            "SUB r1 r0 r2\n" +
-            "SUB r0 r2 r3\n" +
-            "SUB r0 r1 r4\n",
+        "MOV r0 42\n" +
+            "MOV r1 84\n" +
+            "SUB r2 r0 r1\n" +
+            "SUB r3 r0 r2\n" +
+            "SUB r4 r0 r1",
     assertions: {
         "r2": -42,
         "r3": -84,
@@ -36,21 +48,32 @@ _examples["SUB"] = {
 
 _examples["SUBI"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "SUBI 21 r0 r1",
+        "MOV r0 42\n" +
+            "SUBI r1 r0 42",
     assetions: {
         "r1": 21
     }
 };
 
+_examples["MUL"] = {
+    assembly:
+        "MOV r0 2\n" +
+            "MOV r1 2\n" +
+            "MUL r2 r0 r1",
+    assertions:
+    {
+        "r2": 4
+    }
+};
+
 _examples["CMP"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 21 r1\n" +
-            "CMP r0 r1\n" +
+        "MOV r0 42\n" +
+            "MOV r1 21\n" +
             "CMP r1 r0\n" +
-            "MOV 21 r2\n" +
-            "CMP r1 r2\n",
+            "CMP r0 r1\n" +
+            "MOV r2 21\n" +
+            "CMP r2 r1",
     assertions: {
         "eq": 1,
         "gt": 1
@@ -60,9 +83,9 @@ _examples["CMP"] = {
 _examples["B"] = {
     assembly:
         "B label\n" +
-            "MOV -1 r5\n" +
+            "MOV r5 -1\n" +
             "label:\n" +
-            "MOV 42 r0",
+            "MOV r0 42",
     assertions: {
         "r0": 42,
         "r5": ""
@@ -129,16 +152,6 @@ _examples["BLT"] = {
     }
 };
 
-_examples["MOV"] = {
-    assembly:
-        "MOV 42 r0\n" +
-            "MOV 84 r1\n",
-    assertions: {
-        "r0": 42,
-        "r1": 84
-    }
-};
-
 _examples["CPY"] = {
     assembly:
         "MOV 42 r0\n" +
@@ -150,17 +163,17 @@ _examples["CPY"] = {
 
 _examples["STR"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 0 r1\n" +
-            "STR r0 r1\n"
+        "MOV r0 42\n" +
+            "MOV r1 0\n" +
+            "STR r1 r0\n"
 };
 
 _examples["LDR"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 1 r1\n" +
-            "STR r0 r1\n" +
-            "LDR r1 r5\n",
+        "MOV r0 42\n" +
+            "MOV r1 1\n" +
+            "STR r1 r0\n" +
+            "LDR r5 r1\n",
     assertions: {
         "r5": 42
     }
@@ -184,10 +197,10 @@ _examples["Simple while loop"] = {
     }
 };
 
-_examples["For loop with arrays"] = {    
+_examples["For loop with arrays"] = {
     assembly:
-        "MOV 0 r0\n" +  //counter
-            "MOV 0 r1\n" +  //address for a
+        "MOV 0 r0\n" + //counter
+            "MOV 0 r1\n" + //address for a
             "MOV 0 r7\n" + //starting memory location
             "ST 0 r7\n" +
             "ADDI 1 r7 r7\n" +
@@ -205,7 +218,7 @@ _examples["For loop with arrays"] = {
             "ADDI 1 r7 r7\n" +
             "ST 8 r7\n" +
             "\n" +
-            "MOV 3 r3\n" +  //counter limit
+            "MOV 3 r3\n" + //counter limit
             "loop_begin:\n" +
             "CMP r0 r3\n" +
             "BEQ loop_end\n" +

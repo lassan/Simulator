@@ -46,8 +46,7 @@
     <Content Include="Scripts\assembler.js" />
     <Content Include="Scripts\control.js" />
     <Content Include="Scripts\cpu.js" />
-    <Content Include="Scripts\display.js" />
-    <Content Include="Scripts\examples.js" />
+    <TypeScriptCompile Include="TypeScript\examples.ts" />
     <TypeScriptCompile Include="TypeScript\helpers.ts" />
     <Content Include="Scripts\instructions.js" />
     <Content Include="Libraries\jquery-2.0.3.min.js" />
@@ -55,7 +54,8 @@
     <Content Include="StyleSheets\console.css" />
     <Content Include="StyleSheets\fonts.css" />
     <Content Include="StyleSheets\style.css" />
-    <Content Include="Libraries\watch.js" />
+    <Content Include="Scripts\watch.js" />
+    <TypeScriptCompile Include="TypeScript\Queue.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -81,7 +81,7 @@
     <TypeScriptCompile Include="TypeScript\Assembler.ts" />
     <TypeScriptCompile Include="TypeScript\cpu.ts" />
     <TypeScriptCompile Include="TypeScript\Pipeline.ts" />
-    <TypeScriptCompile Include="TypeScript\SimulatorConsole.ts" />
+    <TypeScriptCompile Include="TypeScript\Display.ts" />
     <TypeScriptCompile Include="TypeScript\Instructions.ts" />
     <TypeScriptCompile Include="TypeScript\initialise.ts" />
   </ItemGroup>

@@ -7,21 +7,24 @@
         <link href="StyleSheets/console.css" rel="stylesheet"/>
         <script type="text/javascript" src="Libraries/jquery-2.0.3.min.js"> </script>
         <!--<script type="text/javascript" src="Scripts/helpers.js"> </script>
-        <script type="text/javascript" src="Scripts/cpu.js"> </script>
-        <script type="text/javascript" src="Scripts/assembler.js"> </script>
-        <script type="text/javascript" src="Scripts/instructions.js"> </script>
-        <script type="text/javascript" src="Scripts/examples.js"> </script>
-        <script type="text/javascript" src="Libraries/watch.js"> </script>
-        <script type="text/javascript" src="Scripts/control.js"> </script>-->
+            <script type="text/javascript" src="Scripts/cpu.js"> </script>
+            <script type="text/javascript" src="Scripts/assembler.js"> </script>
+            <script type="text/javascript" src="Scripts/instructions.js"> </script>
+            <script type="text/javascript" src="Scripts/examples.js"> </script>
+            <script type="text/javascript" src="Libraries/watch.js"> </script>
+            <script type="text/javascript" src="Scripts/control.js"> </script>-->
         <!--<script type="text/javascript" src="Scripts/display.js"> </script>-->
-        <script type="text/javascript" src="TypeScript/helpers.js"></script>
-        <script type="text/javascript" src="TypeScript/Instructions.js"></script>
-        <script type="text/javascript" src="TypeScript/Assembler.js"></script>
-        <script type="text/javascript" src="TypeScript/ExecutionUnits.js"></script>
-        <script type="text/javascript" src="TypeScript/SimulatorConsole.js"></script>
-        <script type="text/javascript" src="TypeScript/cpu.js"></script>
-        <script type="text/javascript" src="TypeScript/Pipeline.js"></script>
-        <script type="text/javascript" src="TypeScript/initialise.js"></script>
+        <script type="text/javascript" src="TypeScript/Queue.js"></script>
+        <script type="text/javascript" src="TypeScript/Display.js"></script>
+        <script type="text/javascript" src="TypeScript/helpers.js"> </script>
+        <script type="text/javascript" src="TypeScript/examples.js"> </script>
+        <script type="text/javascript" src="TypeScript/Instructions.js"> </script>
+        <script type="text/javascript" src="TypeScript/Assembler.js"> </script>
+        <script type="text/javascript" src="TypeScript/ExecutionUnits.js"> </script>
+        <script type="text/javascript" src="TypeScript/SimulatorConsole.js"> </script>
+        <script type="text/javascript" src="TypeScript/cpu.js"> </script>
+        <script type="text/javascript" src="TypeScript/Pipeline.js"> </script>
+        <script type="text/javascript" src="TypeScript/initialise.js"> </script>
 
     </head>
     <body>
@@ -76,15 +79,35 @@
                                 <td></td>
                             </tr>
                             <tr>
+                                <td>r8</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r9</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r10</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r11</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r12</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>r13</td>
+                                <td></td>
+                            </tr>
+                            <tr>
                                 <td>pc</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>eq</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>gt</td>
+                                <td>st</td>
                                 <td></td>
                             </tr>
                         </tbody>
@@ -102,49 +125,70 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>r0</td>
+                                <td>0</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r1</td>
+                                <td>1</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r2</td>
+                                <td>2</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r3</td>
+                                <td>3</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r4</td>
+                                <td>4</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r5</td>
+                                <td>5</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r6</td>
+                                <td>6</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>r7</td>
+                                <td>7</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>pc</td>
+                                <td>8</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>eq</td>
+                                <td>9</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>gt</td>
+                                <td>10</td>
                                 <td></td>
                             </tr>
+                            <tr>
+                                <td>11</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td></td>
+                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -159,10 +203,12 @@
                     <div>
                         <select>
                             <option>Make a selection</option>
-                            <optgroup label="Arithmetic Instructions">
+                            <optgroup label="ArithmeticUnit Instructions">
+                                <option>MOV</option>
                                 <option>ADD</option>
                                 <option>ADDI</option>
                                 <option>SUB</option>
+                                <option>MUL</option>
                                 <option>SUBI</option>
                             </optgroup>
                             <optgroup label="Branch and Conditional Instructions">
