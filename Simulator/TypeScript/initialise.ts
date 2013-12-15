@@ -1,5 +1,6 @@
 ///<reference path="Queue.ts"/>
 /// <reference path="ExecutionUnits.ts"/>
+///<reference path="DecodeUnit.ts"/>
 /// <reference path="Display.ts"/>
 /// <reference path="Assembler.ts"/>
 /// <reference path="cpu.ts"/>

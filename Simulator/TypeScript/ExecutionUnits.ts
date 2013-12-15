@@ -9,23 +9,36 @@ class ExecutionUnit {
         this.operation = operation;
         this.writeBackRegister = writeBackRegister;
         this.result = null;
+        this.free = false;
     }
 
     execute(): void {
         this[this.operation.toLowerCase()]();
-        this.free = false;
+        this.executing = true;
     }
 
-    getResult(): number { return this.result; }
+    getResult(): number {
+        if (this.delay == 0)
+        {
+            this.free = true;
+            var resultToReturn = this.result;
+            this.result = null;
+            this.operands = null;
+            this.operation = null;
+            this.writeBackRegister = null;
+            return resultToReturn;
+        }
+        else return null;
+    }
 
     clockTick(): void {
         if (this.delay > 0)
             this.delay--;
         if (this.delay == 0)
-            this.free = true;
+            this.executing = false;
     }
 
-    setUnitType(): void { throw "Set name function not overridden"; }
+    setUnitType(): void { throw "setUnitType function not overridden"; }
 
     toString(): string {
         return Instructions.Type[this.type] + ' - ' +
@@ -36,6 +49,7 @@ class ExecutionUnit {
             ', result: ' + this.result;
     }
 
+    public executing: boolean = false;
     public type : Instructions.Type;
     public free : boolean = true;
     public delay : number;

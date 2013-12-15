@@ -1,10 +1,10 @@
 /// <reference path="Display.ts" />
 
 class Pipeline {
-    private _cpu: CPU;
-    private _instructions: Instructions.Instruction[];
-    private _executionUnits: ExecutionUnit[];
-    private _decodeUnits: DecodeUnit[];
+    private _cpu : CPU;
+    private _instructions : Instructions.Instruction[];
+    private _executionUnits : ExecutionUnit[];
+    private _decodeUnits : DecodeUnit[];
 
     constructor(cpu: CPU, instructions: Instructions.Instruction[],
         executionUnits: ExecutionUnit[],
@@ -16,43 +16,71 @@ class Pipeline {
     }
 
     public start(): void {
-        //var instructions = new Queue<Instructions.Instruction>();
-        //var executionUnits = new Queue<ExecutionUnit>();
+        var pipelineCounter = 0;
+        var instructionCounter = 0;
 
-        var instructions: Instructions.Instruction[] = [null, null, null, null];
-        var executionUnits: ExecutionUnit[] = [null, null, null];
+        var instructions : Instructions.Instruction[] = [null, null, null, null];
+        var executionUnits : ExecutionUnit[] = [null, null, null];
 
-        var instruction;
-        while ((instruction = this.fetch()) != null) {
-            var exUnit = this._decodeUnits[0].decode(instruction);
-            this.execute(exUnit);
-            this.writeback(exUnit);
+        while (true) {
+            this.sendClockTick(executionUnits);
+
+            this.writeback(executionUnits[2]);
+
+            if (!this._writeBackWait) {
+                executionUnits[2] = executionUnits[1];
+                executionUnits[1] = executionUnits[0];
+                executionUnits[0] = null;
+            }
+
+            this.sendClockTick(executionUnits);
+
+            this.execute(executionUnits[1]); //instructions[2]
+
+            this.sendClockTick(executionUnits);
+
+            executionUnits[0] = this._decodeUnits[0].decode(instructions[1]);
+
+            this.sendClockTick(executionUnits);
+
+
+            if (!this._decodeUnits[0].wait) {
+                instructions[0] = this.fetch();
+
+                if (instructions[0] != null) {
+                    instructionCounter++;
+                    Display.writeLine(instructions[0].toString());
+                }
+
+                instructions[3] = instructions[2];
+                instructions[2] = instructions[1];
+                instructions[1] = instructions[0];
+                instructions[0] = null;
+            }
+
+            pipelineCounter++;
+
+            if(this.isPipelineEmpty(instructions, executionUnits)) break;
         }
 
-        //while (true) {
-        //    this.writeback(instructions[3], executionUnits[2]);
-        //    this.execute(executionUnits[1]);    //instructions[2]
-        //    executionUnits[0] = this.decode(instructions[1]);
-
-        //    instructions[0] = this.fetch();
-
-        //    if (instructions[0] == null)
-        //        break;
-
-        //    Display.writeLine(instructions[0].toString());
-
-        //    instructions[3] = instructions[2];
-        //    instructions[2] = instructions[1];
-        //    instructions[1] = instructions[0];
-        //    instructions[0] = null;
-
-        //    executionUnits[2] = executionUnits[1];
-        //    executionUnits[1] = executionUnits[0];
-        //    executionUnits[0] = null;
-
-        //}
-
         Display.writeLine("Execution terminated.");
+        Display.writeLine("No. of pipeline cycles: " + pipelineCounter, Display.PrintType.Instrumentation);
+        Display.writeLine("Instructions fetched:  " + instructionCounter, Display.PrintType.Instrumentation);
+    }
+
+
+    private isPipelineEmpty(instructions: Instructions.Instruction[], executionUnits: ExecutionUnit[]): boolean{
+        var instructionsPresent = instructions.some((elem) => elem != null);
+        var executionsPresent = executionUnits.some((elem) => elem != null);
+
+        return !(instructionsPresent || executionsPresent);
+    }
+
+
+    private sendClockTick(executionUnits: ExecutionUnit[]) {
+        executionUnits.forEach((elem) => {
+            if (elem != null) elem.clockTick();
+        });
     }
 
     private fetch(): Instructions.Instruction {
@@ -73,19 +101,29 @@ class Pipeline {
     private execute(executionUnit: ExecutionUnit): void {
         if (executionUnit == null)
             return;
-
-        executionUnit.execute();
+        if (!executionUnit.executing)
+            executionUnit.execute();
     }
+
+    private _writeBackWait: boolean = false;
 
     private writeback(executionUnit: ExecutionUnit): void {
         if (executionUnit == null || executionUnit.writeBackRegister == null)
             return;
 
-        var destination = executionUnit.writeBackRegister;
-        this._cpu.RegisterFile[destination] = +executionUnit.result;
-        Display.write("result: ");
-        Display.writeLine(this._cpu.RegisterFile[destination]);
-    }
-}
 
-  
+        var destination = executionUnit.writeBackRegister;
+        var result = executionUnit.getResult();
+        if (result== null) {
+            this._writeBackWait = true;
+            Display.writeLine("Result not yet ready", Display.PrintType.Error);
+        } else {
+            this._cpu.RegisterFile[destination] = result;
+            Display.write("result: ");
+            Display.writeLine(this._cpu.RegisterFile[destination]);
+            this._writeBackWait = false;
+        }
+
+
+    }
+    }
