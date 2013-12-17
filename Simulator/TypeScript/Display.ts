@@ -51,7 +51,7 @@ module Display {
         });
     }
 
-    export function updateRegisterTable(cpu: CPU) : void {
+    export function updateRegisterTable(registerFile: Register[]) : void {
         /// <summary>
         ///     Updates the table with register value on the webpage with the latest values
         /// </summary>
@@ -60,7 +60,7 @@ module Display {
             var td0 = $(tr).find('td')[0];
             var td1 = $(tr).find('td')[1];
 
-            var val = cpu.RegisterFile[td0.innerText];
+            var val = registerFile[td0.innerText].value;
             if (val != null)
                 $(td1).text(val);
         });

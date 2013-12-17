@@ -1,3 +1,4 @@
+///<reference path="cpu.ts"/>
 /// <reference path="Display.ts" />
 ///<reference path="Enums.ts"/>
 
@@ -120,8 +121,10 @@ class Pipeline {
         var destination = unit.writeBackRegister;
 
         if (unit.state == Enums.State.Completed) {
-            this._cpu.RegisterFile[destination] = unit.getResult();
-            Display.writeLine(this._cpu.RegisterFile[destination]);
+            this._cpu.RegisterFile[destination].value = unit.getResult();
+            this._cpu.RegisterFile[destination].set = true;
+
+            //Display.writeLine(this._cpu.RegisterFile[destination]);
             this._writeBackWait = false;
         } else if (unit.state == Enums.State.Executing) {
             this._writeBackWait = true;

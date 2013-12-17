@@ -1,6 +1,14 @@
+class Register {
+    constructor(public value: number, public set: boolean) { }
+
+    public toString() {
+        return this.value + " -  " + this.set;
+    }
+}
+
 class CPU {
-    public RegisterFile: number[];
-    public Memory: number[];
+    public RegisterFile : Register[];
+    public Memory : number[];
 
     constructor() {
         this.reset();
@@ -8,22 +16,22 @@ class CPU {
 
     private initialiseRegisterFile(): void {
         this.RegisterFile = [];
-        this.RegisterFile["r0"] = null;
-        this.RegisterFile["r1"] = null;
-        this.RegisterFile["r2"] = null;
-        this.RegisterFile["r3"] = null;
-        this.RegisterFile["r4"] = null;
-        this.RegisterFile["r5"] = null;
-        this.RegisterFile["r6"] = null;
-        this.RegisterFile["r7"] = null;
-        this.RegisterFile["r8"] = null;
-        this.RegisterFile["r9"] = null;
-        this.RegisterFile["r10"] = null;
-        this.RegisterFile["r11"] = null;
-        this.RegisterFile["r12"] = null;
-        this.RegisterFile["r13"] = null;
-        this.RegisterFile["pc"] = 0;
-        this.RegisterFile["st"] = null;
+        this.RegisterFile["r0"] = new Register(null, true);
+        this.RegisterFile["r1"] = new Register(null, true);
+        this.RegisterFile["r2"] = new Register(null, true);
+        this.RegisterFile["r3"] = new Register(null, true);
+        this.RegisterFile["r4"] = new Register(null, true);
+        this.RegisterFile["r5"] = new Register(null, true);
+        this.RegisterFile["r6"] = new Register(null, true);
+        this.RegisterFile["r7"] = new Register(null, true);
+        this.RegisterFile["r8"] = new Register(null, true);
+        this.RegisterFile["r9"] = new Register(null, true);
+        this.RegisterFile["r10"] = new Register(null, true);
+        this.RegisterFile["r11"] = new Register(null, true);
+        this.RegisterFile["r12"] = new Register(null, true);
+        this.RegisterFile["r13"] = new Register(null, true);
+        this.RegisterFile["pc"] = new Register(0, true);
+        this.RegisterFile["st"] = new Register(null, true);
     }
 
     public reset(): void {
@@ -38,14 +46,14 @@ class CPU {
     }
 
     public incrementProgramCounter(): void {
-        this.RegisterFile["pc"]++;
+        this.RegisterFile["pc"].value++;
     }
 
     public getProgramCounter() : number {
-        return this.RegisterFile["pc"];
+        return this.RegisterFile["pc"].value;
     }
 
     public setProgramCounter(pc: number) :void {
-        this.RegisterFile["pc"] = pc;
+        this.RegisterFile["pc"].value = pc;
     }
-}
+    }

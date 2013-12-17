@@ -24,12 +24,12 @@ function ExecuteButtonClick() {
     var instructions = assembler.getInstructions();
 
     var executionUnits = getExecutionUnits(cpu, unitsNum["alu"], unitsNum["loadstore"], unitsNum["branch"]);
-    var decodeUnits = getDecodeUnits(cpu, executionUnits, unitsNum["decode"]);
+    var decodeUnits = getDecodeUnits(cpu.RegisterFile, executionUnits, unitsNum["decode"]);
 
     var pipeline = new Pipeline(cpu, instructions, executionUnits, decodeUnits);
     pipeline.start();
 
-    Display.updateRegisterTable(cpu);
+    Display.updateRegisterTable(cpu.RegisterFile);
     Display.updateMemoryTable(cpu);
 }
 
@@ -73,10 +73,10 @@ function getExecutionUnits(cpu: CPU, numAlu, numLoadStore, numBranch): Execution
     return executionUnits;
 }
 
-function getDecodeUnits(cpu: CPU, executionUnits : ExecutionUnit[], num :number): DecodeUnit[] {
+function getDecodeUnits(registerFile: Register[], executionUnits : ExecutionUnit[], num :number): DecodeUnit[] {
     var decodeUnits : DecodeUnit[] = [];
     for (var i = 0; i < num; i++) {
-        var dUnit = new DecodeUnit(executionUnits, cpu.RegisterFile);
+        var dUnit = new DecodeUnit(executionUnits, registerFile);
         decodeUnits.push(dUnit);
     }
     return decodeUnits;
