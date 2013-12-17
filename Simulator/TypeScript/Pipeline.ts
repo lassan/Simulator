@@ -115,17 +115,27 @@ class Pipeline {
     private _writeBackWait : boolean = false;
 
     private writeback(unit: ExecutionUnit): void {
-        if (unit == null || unit.writeBackRegister == null)
+        if (unit == null)
             return;
 
         var destination = unit.writeBackRegister;
 
         if (unit.state == Enums.State.Completed) {
-            this._cpu.RegisterFile[destination].value = unit.getResult();
+            this._writeBackWait = false;
+
+            var result = unit.getResult();
+
+            /// in the case of store instruction, there is no result
+            /// but we still want to call getResult to reset its state
+            if (result == null)
+                return;
+
+
+            this._cpu.RegisterFile[destination].value = result;
             this._cpu.RegisterFile[destination].set = true;
 
             //Display.writeLine(this._cpu.RegisterFile[destination]);
-            this._writeBackWait = false;
+            
         } else if (unit.state == Enums.State.Executing) {
             this._writeBackWait = true;
             Display.writeLine("Result not ready yet. Still executing.", Enums.Style.Error);

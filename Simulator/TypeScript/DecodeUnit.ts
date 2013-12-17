@@ -89,17 +89,21 @@ class DecodeUnit {
         return this.assignExecutionUnit(instruction, operands, "pc");
     }
 
-    private assignExecutionUnit(instruction: Instructions.Instruction, operands: any[], writeBackRegister: string): ExecutionUnit {
+    private assignExecutionUnit(instruction: Instructions.Instruction, operands: any[],  writeBackRegister: string): ExecutionUnit {
+
+        var units = this._executionUnits;
+
         //figure out the correct execution unit
-        for (var j in this._executionUnits) {
-            if (this._executionUnits[j].type == instruction.type
-                && this._executionUnits[j].state == Enums.State.Free) {
-                this._executionUnits[j].setInstruction(operands, instruction.name, writeBackRegister);
+        for (var j in units) {
+            if (units[j].type == instruction.type
+                && units[j].state == Enums.State.Free) {
+                units[j].setInstruction(operands, instruction.name, writeBackRegister);
                 this.wait = false;
 
-                this._registerFile[writeBackRegister].set = false;
+                if(writeBackRegister != null)
+                    this._registerFile[writeBackRegister].set = false;
 
-                return this._executionUnits[j];
+                    return units[j];
             }
         }
         this.wait = true;

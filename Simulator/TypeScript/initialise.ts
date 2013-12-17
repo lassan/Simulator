@@ -17,6 +17,8 @@ function ExecuteButtonClick() {
     if (unitsNum == null) return;
 
     var cpu = new CPU();
+    updateDisplay(cpu);
+
 
     var input = $('#assemblyInputDiv textarea').text();
 
@@ -29,8 +31,7 @@ function ExecuteButtonClick() {
     var pipeline = new Pipeline(cpu, instructions, executionUnits, decodeUnits);
     pipeline.start();
 
-    Display.updateRegisterTable(cpu.RegisterFile);
-    Display.updateMemoryTable(cpu);
+    updateDisplay(cpu);
 }
 
 function getUnitNumbers() {
@@ -80,6 +81,12 @@ function getDecodeUnits(registerFile: Register[], executionUnits : ExecutionUnit
         decodeUnits.push(dUnit);
     }
     return decodeUnits;
+}
+
+function updateDisplay(cpu: CPU) {
+    Display.clearTables();
+    Display.updateRegisterTable(cpu.RegisterFile);
+    Display.updateMemoryTable(cpu);
 }
 
 function exampleSelected(event) {

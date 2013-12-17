@@ -44,7 +44,7 @@ class ExecutionUnit {
              this.operation +
             ', state: ' + Enums.State[this.state] +
             ', delay: ' + this.delay +
-            ', operands: ' + this.operands.toString() +
+            ', operands: ' + this.operands +
             ', result: ' + this.result +
             ', writebackRegister: ' + this.writeBackRegister;
     }

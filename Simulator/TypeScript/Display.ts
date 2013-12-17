@@ -51,6 +51,11 @@ module Display {
         });
     }
 
+    export function clearTables() {
+        ClearTable("#registerTable");
+        ClearTable("#memoryTable");
+    }
+
     export function updateRegisterTable(registerFile: Register[]) : void {
         /// <summary>
         ///     Updates the table with register value on the webpage with the latest values
@@ -79,6 +84,15 @@ module Display {
     }
 
     /* Private functions */
+
+    function ClearTable(tableName: string) {
+        var selector = tableName + " tbody tr";
+        var $trs = $(selector);
+        $trs.each((i, tr) => {
+            var td1 = $(tr).find('td')[1];
+                $(td1).text('');
+        });
+    }
 
     function ScrollToBottom(): void {
         $('#console div').scrollTop($('#console div')[0].scrollHeight);
