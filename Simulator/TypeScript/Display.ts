@@ -1,14 +1,9 @@
 module Display {
-
-    export enum PrintType {
-        Normal, Error, Instrumentation
-        }
-
-    export function write(text: string, type?: PrintType): void {
+    export function write(text: string, type?: Enums.Style): void {
         var typeClass : string = '';
 
         if (type == null)
-            typeClass = GetTypeClass(Display.PrintType.Normal);
+            typeClass = GetTypeClass(Enums.Style.Normal);
 
         else
             typeClass = GetTypeClass(type);
@@ -19,11 +14,11 @@ module Display {
         $('#console div').append(line);
     }
 
-    export function writeLine(text: string, type?: PrintType): void {
+    export function writeLine(text: string, type?: Enums.Style): void {
         var typeClass : string = '';
 
         if (type == null)
-            typeClass = GetTypeClass(Display.PrintType.Normal);
+            typeClass = GetTypeClass(Enums.Style.Normal);
 
         else
             typeClass = GetTypeClass(type);
@@ -43,7 +38,7 @@ module Display {
 
         array.forEach((elem, index) => {
             Display.write(index.toString() +
-                ":&nbsp;&nbsp;&nbsp;&nbsp;", Display.PrintType.Instrumentation);
+                ":&nbsp;&nbsp;&nbsp;&nbsp;", Enums.Style.Instrumentation);
 
             if (elem != null)
                 Display.writeLine(elem.toString());
@@ -81,9 +76,9 @@ module Display {
 
 /* Private functions */
 
-    function GetTypeClass(type: PrintType): string {
+    function GetTypeClass(type: Enums.Style): string {
         var typeClass : string = "c_";
 
-        return typeClass.concat(Display.PrintType[type].toLowerCase());
+        return typeClass.concat(Enums.Style[type].toLowerCase());
     }
 }

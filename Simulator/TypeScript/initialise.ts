@@ -1,66 +1,63 @@
-///<reference path="Queue.ts"/>
+///<reference path="Enums.ts"/>
 /// <reference path="ExecutionUnits.ts"/>
 ///<reference path="DecodeUnit.ts"/>
 /// <reference path="Display.ts"/>
 /// <reference path="Assembler.ts"/>
 /// <reference path="cpu.ts"/>
 
-var _cpu: CPU;
-
-var _numAlu = 3;
-var _numLoadStore = 1;
-var _numBranch = 1;
-var _numDecode = 1;
-
 $(document).ready(function () {
-
     $('#executeButton').click(ExecuteButtonClick);
     $('#clearConsoleButton').click(() => Display.clearConsole());
     $("#assemblyInputDiv select").change(exampleSelected);
 });
 
 function ExecuteButtonClick() {
-     _cpu = new CPU();
+    var numAlu = 3;
+    var numLoadStore = 1;
+    var numBranch = 1;
+    var numDecode = 1;
+
+    var cpu = new CPU();
 
     var input = $('#assemblyInputDiv textarea').text();
 
     var assembler = new Assembler(input);
     var instructions = assembler.getInstructions();
 
-    var executionUnits = getExecutionUnits();
-    var decodeUnits = getDecodeUnits(executionUnits);
+    var executionUnits = getExecutionUnits(cpu, numAlu, numLoadStore, numBranch);
+    var decodeUnits = getDecodeUnits(cpu, executionUnits, numDecode);
 
-    var pipeline = new Pipeline(_cpu, instructions, getExecutionUnits(), decodeUnits);
+    var pipeline = new Pipeline(cpu, instructions, executionUnits, decodeUnits);
     pipeline.start();
 
-    Display.updateRegisterTable(_cpu);
-    Display.updateMemoryTable(_cpu);
+    Display.updateRegisterTable(cpu);
+    Display.updateMemoryTable(cpu);
 }
 
-function getExecutionUnits(): ExecutionUnit[]{
+function getExecutionUnits(cpu: CPU, numAlu, numLoadStore, numBranch): ExecutionUnit[]{
 
     var executionUnits : ExecutionUnit[] = [];
 
-    for (var i = 0; i < _numAlu; i++) {
+    for (var i = 0; i < numAlu; i++) {
         executionUnits.push(new ArithmeticUnit());
     }
-    for (var j = 0; j < _numLoadStore; j++) {
+    for (var j = 0; j < numLoadStore; j++) {
         var mUnit = new MemoryUnit();
-        mUnit.setMemory(_cpu.Memory);
+        mUnit.setMemory(cpu.Memory);
         executionUnits.push(mUnit);
     }
-    for (var k = 0; k < _numBranch; k++) {
+    for (var k = 0; k < numBranch; k++) {
         var bUnit = new BranchUnit();
-        bUnit.setRegisterFile(_cpu.RegisterFile);
+        bUnit.setRegisterFile(cpu.RegisterFile);
         executionUnits.push(bUnit);
     }
     return executionUnits;
 }
 
-function getDecodeUnits(executionUnits : ExecutionUnit[]): DecodeUnit[] {
+function getDecodeUnits(cpu: CPU, executionUnits : ExecutionUnit[], num :number): DecodeUnit[] {
     var decodeUnits: DecodeUnit[] = [];
-    for (var i = 0; i < _numDecode; i++) {
-        var dUnit = new DecodeUnit(executionUnits, _cpu.RegisterFile);
+    for (var i = 0; i < num; i++) {
+        var dUnit = new DecodeUnit(executionUnits, cpu.RegisterFile);
         decodeUnits.push(dUnit);
     }
     return decodeUnits;

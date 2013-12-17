@@ -90,7 +90,7 @@ class Assembler {
         var operands = parts.splice(1);
 
         var instruction = new Instructions[instructionType]();
-        if (instruction.type == Instructions.Type.BranchUnit)
+        if (instruction.type == Enums.ExecutionUnit.BranchUnit)
         {
             var label = this._labels[operands[0]];
             operands = [];

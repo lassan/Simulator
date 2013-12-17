@@ -1,6 +1,6 @@
-
 class ExecutionUnit {
     constructor() {
+        this.state = Enums.State.Free;
         this.setUnitType();
     }
 
@@ -9,49 +9,48 @@ class ExecutionUnit {
         this.operation = operation;
         this.writeBackRegister = writeBackRegister;
         this.result = null;
-        this.free = false;
+        this.state = Enums.State.Assigned;
     }
 
     execute(): void {
         this[this.operation.toLowerCase()]();
-        this.executing = true;
+        this.state = Enums.State.Executing;
     }
 
     getResult(): number {
         if (this.delay == 0) {
-            this.free = true;
+            this.state = Enums.State.Free;
             var resultToReturn = this.result;
+            this.delay = null;
             this.result = null;
             this.operands = null;
             this.operation = null;
             this.writeBackRegister = null;
             return resultToReturn;
-        } else return null;
+        } else throw "Execution Unit has not yet completed execution";
     }
 
     clockTick(): void {
         if (this.delay > 0)
             this.delay--;
         if (this.delay == 0)
-            this.executing = false;
+            this.state = Enums.State.Completed;
     }
 
     setUnitType(): void { throw "setUnitType function not overridden"; }
 
     toString(): string {
-        return Instructions.Type[this.type] + ' - ' +
+        return Enums.ExecutionUnit[this.type] + ' - ' +
              this.operation +
-            ', free: ' + this.free +
-            ', executing: ' + this.executing +
+            ', state: ' + Enums.State[this.state] +
             ', delay: ' + this.delay +
             ', operands: ' + this.operands.toString() +
             ', result: ' + this.result +
             ', writebackRegister: ' + this.writeBackRegister;
     }
 
-    public executing : boolean = false;
-    public type : Instructions.Type;
-    public free : boolean = true;
+    public state: Enums.State;
+    public type : Enums.ExecutionUnit;
     public delay : number;
     public operands : number[];
     public operation : string;
@@ -61,7 +60,7 @@ class ExecutionUnit {
 
 class ArithmeticUnit extends ExecutionUnit {
     setUnitType(): void {
-        this.type = Instructions.Type.ArithmeticUnit;
+        this.type = Enums.ExecutionUnit.ArithmeticUnit;
     }
 
     mov(): void {
@@ -113,7 +112,7 @@ class MemoryUnit extends ExecutionUnit {
     private _memory : number[] = null;
 
     setUnitType(): void {
-        this.type = Instructions.Type.MemoryUnit;
+        this.type = Enums.ExecutionUnit.MemoryUnit;
     }
 
     setMemory(memory : number[]): void {
@@ -152,7 +151,7 @@ class BranchUnit extends ExecutionUnit {
     private _registerFile : number[];
 
     setUnitType(): void {
-        this.type = Instructions.Type.BranchUnit;
+        this.type = Enums.ExecutionUnit.BranchUnit;
     }
 
     setRegisterFile(registerFile: number[]): void {

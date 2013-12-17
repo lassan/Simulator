@@ -1,4 +1,5 @@
 /// <reference path="Display.ts" />
+///<reference path="Enums.ts"/>
 
 class Pipeline {
     private _cpu : CPU;
@@ -30,15 +31,15 @@ class Pipeline {
 
             pipelineCounter++;
 
-            Display.writeLine("Cycle # " + pipelineCounter, Display.PrintType.Instrumentation);
+            Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
             Display.printArray(instructions, "Instructions");
             Display.printArray(executionUnits, "ExecutionUnits");
         }
 
         Display.writeLine("Execution terminated.");
-        Display.writeLine("No. of pipeline cycles: " + pipelineCounter, Display.PrintType.Instrumentation);
-        Display.writeLine("Instructions fetched:  " + instructionCounter, Display.PrintType.Instrumentation);
+        Display.writeLine("No. of pipeline cycles: " + pipelineCounter, Enums.Style.Instrumentation);
+        Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
     }
 
 
@@ -75,11 +76,8 @@ class Pipeline {
 
         //this.sendClockTick(executionUnits);
 
-
         if (!this._decodeUnits[0].wait) {
             instructions[0] = this.fetch();
-
-         
         }
     }
 
@@ -103,7 +101,7 @@ class Pipeline {
             ? null
             : this._instructions[pc];
 
-        if (instruction != null && instruction.type != Instructions.Type.BranchUnit) {
+        if (instruction != null && instruction.type != Enums.ExecutionUnit.BranchUnit) {
             // if it's not a branch, incremement the program counter
             // program counter for branches is set in the writeback stage
             this._cpu.incrementProgramCounter();
@@ -115,7 +113,7 @@ class Pipeline {
     private execute(executionUnit: ExecutionUnit): void {
         if (executionUnit == null)
             return;
-        if (!executionUnit.executing)
+        if (executionUnit.state != Enums.State.Executing)
             executionUnit.execute();        
     }
 
@@ -130,7 +128,7 @@ class Pipeline {
         var result = executionUnit.getResult();
         if (result == null) {
             this._writeBackWait = true;
-            Display.writeLine("Result not yet ready", Display.PrintType.Error);
+            Display.writeLine("Result not yet ready", Enums.Style.Error);
         } else {
             this._cpu.RegisterFile[destination] = result;
             Display.write("result: ");
