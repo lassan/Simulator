@@ -64,7 +64,7 @@ class ArithmeticUnit extends ExecutionUnit {
     }
 
     mov(): void {
-        this.delay = 2;
+        this.delay = 1;
         this.result = this.operands[0];
     }
     
@@ -89,7 +89,7 @@ class ArithmeticUnit extends ExecutionUnit {
     }
 
     mul(): void {
-        this.delay = 1;
+        this.delay = 4;
         this.result = this.operands[0] * this.operands[1];
     }
 
@@ -132,7 +132,7 @@ class MemoryUnit extends ExecutionUnit {
         /// <summary>
         ///     STR address data - data to store in src, memory address to store to in dst
         /// </summary>
-        this.delay = 1;
+        this.delay = 4;
         var data = this.operands[1];
 
         if (data == null)

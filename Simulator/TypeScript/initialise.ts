@@ -1,21 +1,20 @@
-///<reference path="Enums.ts"/>
-/// <reference path="ExecutionUnits.ts"/>
-///<reference path="DecodeUnit.ts"/>
-/// <reference path="Display.ts"/>
-/// <reference path="Assembler.ts"/>
-/// <reference path="cpu.ts"/>
+/// <reference path="Enums.ts" />
+/// <reference path="ExecutionUnits.ts" />
+/// <reference path="DecodeUnit.ts" />
+/// <reference path="Display.ts" />
+/// <reference path="Assembler.ts" />
+/// <reference path="cpu.ts" />
 
-$(document).ready(function () {
+$(document).ready(function() {
     $('#executeButton').click(ExecuteButtonClick);
     $('#clearConsoleButton').click(() => Display.clearConsole());
     $("#assemblyInputDiv select").change(exampleSelected);
 });
 
 function ExecuteButtonClick() {
-    var numAlu = 3;
-    var numLoadStore = 1;
-    var numBranch = 1;
-    var numDecode = 1;
+
+    var unitsNum = getUnitNumbers();
+    if (unitsNum == null) return;
 
     var cpu = new CPU();
 
@@ -24,14 +23,34 @@ function ExecuteButtonClick() {
     var assembler = new Assembler(input);
     var instructions = assembler.getInstructions();
 
-    var executionUnits = getExecutionUnits(cpu, numAlu, numLoadStore, numBranch);
-    var decodeUnits = getDecodeUnits(cpu, executionUnits, numDecode);
+    var executionUnits = getExecutionUnits(cpu, unitsNum["alu"], unitsNum["loadstore"], unitsNum["branch"]);
+    var decodeUnits = getDecodeUnits(cpu, executionUnits, unitsNum["decode"]);
 
     var pipeline = new Pipeline(cpu, instructions, executionUnits, decodeUnits);
     pipeline.start();
 
     Display.updateRegisterTable(cpu);
     Display.updateMemoryTable(cpu);
+}
+
+function getUnitNumbers() {
+    var unitsNum: number[] = [];
+
+    unitsNum["alu"] = $("input[name=numAlu]").val();
+    unitsNum["loadstore"] = $("input[name=numLoaddStore]").val();
+    ;
+    unitsNum["branch"] = $("input[name=numBranch]").val();
+    ;
+    unitsNum["decode"] = $("input[name=numDecode]").val();
+    ;
+
+    for (var key in unitsNum) {
+        if (unitsNum[key] == null || unitsNum[key] < 1) {
+            alert("Number of " + key + " invalid.");
+            return null;
+        }
+    }
+    return unitsNum;
 }
 
 function getExecutionUnits(cpu: CPU, numAlu, numLoadStore, numBranch): ExecutionUnit[]{
@@ -55,7 +74,7 @@ function getExecutionUnits(cpu: CPU, numAlu, numLoadStore, numBranch): Execution
 }
 
 function getDecodeUnits(cpu: CPU, executionUnits : ExecutionUnit[], num :number): DecodeUnit[] {
-    var decodeUnits: DecodeUnit[] = [];
+    var decodeUnits : DecodeUnit[] = [];
     for (var i = 0; i < num; i++) {
         var dUnit = new DecodeUnit(executionUnits, cpu.RegisterFile);
         decodeUnits.push(dUnit);

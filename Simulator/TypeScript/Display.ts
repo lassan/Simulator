@@ -12,6 +12,8 @@ module Display {
             "\">" + text + "</span>";
 
         $('#console div').append(line);
+
+        ScrollToBottom();
     }
 
     export function writeLine(text: string, type?: Enums.Style): void {
@@ -27,6 +29,8 @@ module Display {
             "\">" + text + "</span><br/>";
 
         $('#console div').append(line);
+
+        ScrollToBottom();
     }
 
     export function clearConsole() {
@@ -74,7 +78,13 @@ module Display {
         });
     }
 
-/* Private functions */
+    /* Private functions */
+
+    function ScrollToBottom(): void {
+        $('#console div').scrollTop($('#console div')[0].scrollHeight);
+
+        //$('#console div').animate({ scrollTop: $('#console div')[0].scrollHeight }, 'fast');
+    }
 
     function GetTypeClass(type: Enums.Style): string {
         var typeClass : string = "c_";
