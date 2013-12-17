@@ -27,7 +27,6 @@ module Instructions {
     /***************************************/
     /***** ArithmeticUnit instructions *****/
     /***************************************/
-
     export class MOV extends Instruction {
         name = "mov";
         numOperands = 2;

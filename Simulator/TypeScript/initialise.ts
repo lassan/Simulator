@@ -7,11 +7,10 @@
 
 var _cpu: CPU;
 
-var _numAlu = 1;
+var _numAlu = 3;
 var _numLoadStore = 1;
 var _numBranch = 1;
 var _numDecode = 1;
-
 
 $(document).ready(function () {
 
@@ -33,6 +32,9 @@ function ExecuteButtonClick() {
 
     var pipeline = new Pipeline(_cpu, instructions, getExecutionUnits(), decodeUnits);
     pipeline.start();
+
+    Display.updateRegisterTable(_cpu);
+    Display.updateMemoryTable(_cpu);
 }
 
 function getExecutionUnits(): ExecutionUnit[]{

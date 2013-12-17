@@ -18,8 +18,7 @@ class ExecutionUnit {
     }
 
     getResult(): number {
-        if (this.delay == 0)
-        {
+        if (this.delay == 0) {
             this.free = true;
             var resultToReturn = this.result;
             this.result = null;
@@ -27,8 +26,7 @@ class ExecutionUnit {
             this.operation = null;
             this.writeBackRegister = null;
             return resultToReturn;
-        }
-        else return null;
+        } else return null;
     }
 
     clockTick(): void {
@@ -42,21 +40,23 @@ class ExecutionUnit {
 
     toString(): string {
         return Instructions.Type[this.type] + ' - ' +
-            'operation: ' + this.operation +
-            ', isFree: ' + this.free +
+             this.operation +
+            ', free: ' + this.free +
+            ', executing: ' + this.executing +
             ', delay: ' + this.delay +
             ', operands: ' + this.operands.toString() +
-            ', result: ' + this.result;
+            ', result: ' + this.result +
+            ', writebackRegister: ' + this.writeBackRegister;
     }
 
-    public executing: boolean = false;
+    public executing : boolean = false;
     public type : Instructions.Type;
     public free : boolean = true;
     public delay : number;
     public operands : number[];
     public operation : string;
-    public result: number;
-    public writeBackRegister: string;
+    public result : number;
+    public writeBackRegister : string;
     }
 
 class ArithmeticUnit extends ExecutionUnit {
@@ -65,7 +65,7 @@ class ArithmeticUnit extends ExecutionUnit {
     }
 
     mov(): void {
-        this.delay = 1;
+        this.delay = 2;
         this.result = this.operands[0];
     }
     
@@ -90,7 +90,7 @@ class ArithmeticUnit extends ExecutionUnit {
     }
 
     mul(): void {
-        this.delay = 4;
+        this.delay = 1;
         this.result = this.operands[0] * this.operands[1];
     }
 
@@ -131,11 +131,19 @@ class MemoryUnit extends ExecutionUnit {
 
     str(): void {
         /// <summary>
-        ///     STR dst src - data to store in src, memory address to store to in dst
+        ///     STR address data - data to store in src, memory address to store to in dst
         /// </summary>
-        this.delay = 4;
-        var address = this.operands[0];
+        this.delay = 1;
         var data = this.operands[1];
+
+        if (data == null)
+            throw "Store data is null";
+
+        var address = this.operands[0];
+        if (address == null)
+            throw "Store address is null";
+
+
         this._memory[address] = data;
     }
     }
