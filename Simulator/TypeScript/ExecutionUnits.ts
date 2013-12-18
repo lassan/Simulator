@@ -4,10 +4,10 @@ class ExecutionUnit {
         this.setUnitType();
     }
 
-    setInstruction(operands: number[], operation: string, writeBackRegister: string): void {
+    setInstruction(operands: number[], operation: string, destination: string): void {
         this.operands = operands;
         this.operation = operation;
-        this.writeBackRegister = writeBackRegister;
+        this.destination = destination;
         this.result = null;
         this.state = Enums.State.Assigned;
     }
@@ -25,7 +25,7 @@ class ExecutionUnit {
             this.result = null;
             this.operands = null;
             this.operation = null;
-            this.writeBackRegister = null;
+            this.destination = null;
             return resultToReturn;
         } else throw "Execution Unit has not yet completed execution";
     }
@@ -46,7 +46,7 @@ class ExecutionUnit {
             ', delay: ' + this.delay +
             ', operands: ' + this.operands +
             ', result: ' + this.result +
-            ', writebackRegister: ' + this.writeBackRegister;
+            ', destination: ' + this.destination;
     }
 
     public state: Enums.State;
@@ -55,7 +55,7 @@ class ExecutionUnit {
     public operands : number[];
     public operation : string;
     public result : number;
-    public writeBackRegister : string;
+    public destination : string;
     }
 
 class ArithmeticUnit extends ExecutionUnit {

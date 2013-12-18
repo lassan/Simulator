@@ -25,7 +25,6 @@ class Pipeline {
         var executionUnits : ExecutionUnit[] = [null, null, null];
 
         while (true) {
-
             this.cycle(instructions, executionUnits);
 
             if (this.isPipelineEmpty(instructions, executionUnits)) break;
@@ -118,7 +117,7 @@ class Pipeline {
         if (unit == null)
             return;
 
-        var destination = unit.writeBackRegister;
+        var destination = unit.destination;
 
         if (unit.state == Enums.State.Completed) {
             this._writeBackWait = false;

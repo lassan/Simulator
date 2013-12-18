@@ -2,125 +2,24 @@ class DecodeUnit {
     private _executionUnits : ExecutionUnit[];
     private _registerFile : Register[];
     public wait : boolean = false;   // whether the pipeline should wait for execution unit to become free
+    private _reservationStation: ReservationStation;
+
 
     constructor(executionUnits: ExecutionUnit[], registerFile : Register[]){
         this._executionUnits = executionUnits;
         this._registerFile = registerFile;
+        this._reservationStation = new ReservationStation(32, executionUnits, registerFile);
+
     }
 
-    decode(instruction: Instructions.Instruction): ExecutionUnit {
+    decode(instruction: Instructions.Instruction) : void {
         if (instruction == null)
-            return null;
+            return;
 
-        this.wait = ! this.registersReady(instruction);
-
-        if (this.wait)
-            return null;
-
-        var executionUnit : ExecutionUnit;
-
-        switch (instruction.type) {
-        case Enums.ExecutionUnit.ArithmeticUnit:
-            executionUnit = this.decodeArithmeticUnitInstruction(instruction);
-            break;
-        case Enums.ExecutionUnit.BranchUnit:
-            executionUnit = this.decodeBranchUnitInstruction(instruction);
-            break;
-        case Enums.ExecutionUnit.MemoryUnit:
-            executionUnit = this.decodeMemoryUnitInstruction(instruction);
-            break;
-        default:
-            throw "What, are you crazy?";
-        }
-
-        return executionUnit;
+        this._reservationStation.add(instruction);       
     }
 
-    private decodeArithmeticUnitInstruction(instruction: Instructions.Instruction): ExecutionUnit {
-        var operands : number[] = [];
-        var executableOperands : number[] = [];
-        var writeBackRegister = instruction.operands[0];
-
-        for (var i in instruction.operands) {
-            var op = instruction.operands[i];
-
-            if (StringHelpers.isNumber(op)) {
-                // If the operand is a number, send it to execution units directly
-                // This situtation occurs in the case of immediate instructions
-                operands.push(+op);
-            } else {
-                // otherwise fetch the numeric value from the register file
-                operands.push(this._registerFile[op].value);
-            }
-        }
-
-        if (instruction.numOperands == 2) {
-            executableOperands.push(operands[1]);
-        } else if (instruction.numOperands == 3) {
-            executableOperands.push(operands[1]);
-            executableOperands.push(operands[2]);
-        }
-
-        return this.assignExecutionUnit(instruction, executableOperands, writeBackRegister);
+    issue(): void {
+        this._reservationStation.dispatch();
     }
-
-    private decodeMemoryUnitInstruction(instruction: Instructions.Instruction): ExecutionUnit {
-        var operands : number[] = [];
-
-        var writeBackRegister : string;
-
-        if (instruction instanceof Instructions.STR)
-            writeBackRegister = null;
-        else
-            writeBackRegister = instruction.operands[0];
-
-        var op1 = this._registerFile[instruction.operands[0]].value;
-        var op2 = this._registerFile[instruction.operands[1]].value;
-
-        operands.push(op1);
-        operands.push(op2);
-
-        return this.assignExecutionUnit(instruction, operands, writeBackRegister);
-    }
-
-    private decodeBranchUnitInstruction(instruction: Instructions.Instruction): ExecutionUnit {
-        var operands : number[] = [];
-        operands.push(+instruction.operands[0]);
-        return this.assignExecutionUnit(instruction, operands, "pc");
-    }
-
-    private assignExecutionUnit(instruction: Instructions.Instruction, operands: any[],  writeBackRegister: string): ExecutionUnit {
-
-        var units = this._executionUnits;
-
-        //figure out the correct execution unit
-        for (var j in units) {
-            if (units[j].type == instruction.type
-                && units[j].state == Enums.State.Free) {
-                units[j].setInstruction(operands, instruction.name, writeBackRegister);
-                this.wait = false;
-
-                if(writeBackRegister != null)
-                    this._registerFile[writeBackRegister].set = false;
-
-                    return units[j];
-            }
-        }
-        this.wait = true;
-        return null;
-    }
-
-    private registersReady(instruction: Instructions.Instruction) : boolean{
-        for (var key in instruction.operands) {
-            var elem = instruction.operands[key];
-            if (!$.isNumeric(elem)) {
-                if (!this._registerFile[elem].set) {
-                    Display.writeLine("Register not set: " + elem, Enums.Style.Error);
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 }

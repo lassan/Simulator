@@ -57,6 +57,7 @@
     <Content Include="StyleSheets\fonts.css" />
     <Content Include="StyleSheets\style.css" />
     <Content Include="Scripts\watch.js" />
+    <TypeScriptCompile Include="TypeScript\ReservationStation.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
