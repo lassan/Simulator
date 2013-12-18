@@ -5,6 +5,8 @@
 /// <reference path="Assembler.ts" />
 /// <reference path="cpu.ts" />
 
+var _config: any[]; 
+
 $(document).ready(function() {
     $('#executeButton').click(ExecuteButtonClick);
     $('#clearConsoleButton').click(() => Display.clearConsole());
@@ -12,9 +14,9 @@ $(document).ready(function() {
 });
 
 function ExecuteButtonClick() {
-
-    var unitsNum = getUnitNumbers();
-    if (unitsNum == null) return;
+    _config = getConfig();
+    
+    if (_config == null) return;
 
     var cpu = new CPU();
     updateDisplay(cpu);
@@ -25,8 +27,8 @@ function ExecuteButtonClick() {
     var assembler = new Assembler(input);
     var instructions = assembler.getInstructions();
 
-    var executionUnits = getExecutionUnits(cpu, unitsNum["alu"], unitsNum["loadstore"], unitsNum["branch"]);
-    var decodeUnits = getDecodeUnits(cpu.RegisterFile, executionUnits, unitsNum["decode"]);
+    var executionUnits = getExecutionUnits(cpu, _config["alu"], _config["loadstore"], _config["branch"]);
+    var decodeUnits = getDecodeUnits(cpu.RegisterFile, executionUnits, _config["decode"]);
 
     var pipeline = new Pipeline(cpu, instructions, executionUnits, decodeUnits);
     pipeline.start();
@@ -34,24 +36,22 @@ function ExecuteButtonClick() {
     updateDisplay(cpu);
 }
 
-function getUnitNumbers() {
-    var unitsNum: number[] = [];
+function getConfig() {
+    var config: number[] = [];
 
-    unitsNum["alu"] = $("input[name=numAlu]").val();
-    unitsNum["loadstore"] = $("input[name=numLoaddStore]").val();
-    ;
-    unitsNum["branch"] = $("input[name=numBranch]").val();
-    ;
-    unitsNum["decode"] = $("input[name=numDecode]").val();
-    ;
+    config["alu"] = $("input[name=numAlu]").val();
+    config["loadstore"] = $("input[name=numLoaddStore]").val();
+    config["branch"] = $("input[name=numBranch]").val();
+    config["decode"] = $("input[name=numDecode]").val();
+    config["sizeRS"] = $("input[name=sizeRS]").val();
 
-    for (var key in unitsNum) {
-        if (unitsNum[key] == null || unitsNum[key] < 1) {
-            alert("Number of " + key + " invalid.");
+    for (var key in config) {
+        if (config[key] == null || config[key] < 1) {
+            alert(key + " invalid.");
             return null;
         }
     }
-    return unitsNum;
+    return config;
 }
 
 function getExecutionUnits(cpu: CPU, numAlu, numLoadStore, numBranch): ExecutionUnit[]{
@@ -75,9 +75,10 @@ function getExecutionUnits(cpu: CPU, numAlu, numLoadStore, numBranch): Execution
 }
 
 function getDecodeUnits(registerFile: Register[], executionUnits : ExecutionUnit[], num :number): DecodeUnit[] {
-    var decodeUnits : DecodeUnit[] = [];
+    var rs = new ReservationStation(_config["numRS"], executionUnits, registerFile);
+    var decodeUnits: DecodeUnit[] = [];
     for (var i = 0; i < num; i++) {
-        var dUnit = new DecodeUnit(executionUnits, registerFile);
+        var dUnit = new DecodeUnit(executionUnits, registerFile, rs);
         decodeUnits.push(dUnit);
     }
     return decodeUnits;

@@ -12,6 +12,7 @@
         <script type="text/javascript" src="TypeScript/examples.js"> </script>
         <script type="text/javascript" src="TypeScript/Instructions.js"> </script>
         <script type="text/javascript" src="TypeScript/Assembler.js"> </script>
+        <script type="text/javascript" src="TypeScript/ReservationStation.js"></script>
         <script type="text/javascript" src="TypeScript/DecodeUnit.js"> </script>
         <script type="text/javascript" src="TypeScript/ExecutionUnits.js"> </script>
         <script type="text/javascript" src="TypeScript/cpu.js"> </script>
@@ -186,13 +187,15 @@
                 </div>
                 
                 <div class="section">
-                    <h3>Other</h3>
+                    <h3>Configuration</h3>
                     <div>
                         Number of units: <br/>
                         Arithmetic <input name="numAlu" type="number" value="1"/><br/>
                         Load/Store <input name="numLoaddStore" type="number" value ="1"/><br />
                         Branch <input name="numBranch" type="number" value="1"/><br />
                         Decode <input name="numDecode" type="number" value="1"/><br/>
+                        <hr/>
+                        Size of Reservation Station <input name="sizeRS" value="32"/>
                     </div>
                 </div>
 

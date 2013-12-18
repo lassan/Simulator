@@ -1,6 +1,6 @@
-///<reference path="cpu.ts"/>
+/// <reference path="cpu.ts" />
 /// <reference path="Display.ts" />
-///<reference path="Enums.ts"/>
+/// <reference path="Enums.ts" />
 
 class Pipeline {
     private _cpu : CPU;
@@ -22,19 +22,17 @@ class Pipeline {
         var instructionCounter = 0;
 
         var instructions : Instructions.Instruction[] = [null, null, null, null];
-        var executionUnits : ExecutionUnit[] = [null, null, null];
-
+        
         while (true) {
-            this.cycle(instructions, executionUnits);
+            this.cycle(instructions);
 
-            if (this.isPipelineEmpty(instructions, executionUnits)) break;
+            if (this.isPipelineEmpty(instructions)) break;
 
             pipelineCounter++;
 
             Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
             Display.printArray(instructions, "Instructions");
-            Display.printArray(executionUnits, "ExecutionUnits");
         }
 
         Display.writeLine("Execution terminated.");
@@ -42,15 +40,13 @@ class Pipeline {
         Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
     }
 
-
-
-    private cycle(instructions: Instructions.Instruction[], executionUnits: ExecutionUnit[]): void {
+    private cycle(instructions: Instructions.Instruction[]): void {
         /// <summary>
         ///     This method models one pipeline cycle
         /// </summary>
-        this.sendClockTick(executionUnits);
+        this.sendClockTick(this._executionUnits);
 
-        if (!this._decodeUnits[0].wait) {
+        if (!this._decodeUnits[0].isFree()) {
             // delay for when there isn't a free unit
             instructions[3] = instructions[2];
             instructions[2] = instructions[1];
@@ -58,26 +54,24 @@ class Pipeline {
             instructions[0] = null;
         }
 
-        this.writeback(executionUnits[2]);
+        this.writeback();
 
-        if (!this._writeBackWait) {
-            // delay for instructions that take more than one cycle
-            executionUnits[2] = executionUnits[1];
-            executionUnits[1] = executionUnits[0];
-            executionUnits[0] = null;
-        }
-        this.execute(executionUnits[1]); //instructions[2]
+        this.sendClockTick(this._executionUnits);
+        this.execute();
 
-        executionUnits[0] = this._decodeUnits[0].decode(instructions[1]);
+        this.sendClockTick(this._executionUnits);
+        this._decodeUnits[0].issue();
+        this._decodeUnits[0].decode(instructions[1]);
 
-        if (!this._decodeUnits[0].wait) {
+        this.sendClockTick(this._executionUnits);
+        if (!this._decodeUnits[0].isFree()) {
             instructions[0] = this.fetch();
         }
     }
 
-    private isPipelineEmpty(instructions: Instructions.Instruction[], executionUnits: ExecutionUnit[]): boolean{
+    private isPipelineEmpty(instructions: Instructions.Instruction[]): boolean{
         var instructionsPresent = instructions.some((elem) => elem != null);
-        var executionsPresent = executionUnits.some((elem) => elem != null);
+        var executionsPresent = this._executionUnits.some((elem) => elem.state != Enums.State.Free);
 
         return !(instructionsPresent || executionsPresent);
     }
@@ -104,41 +98,37 @@ class Pipeline {
         return instruction;
     }
 
-    private execute(unit: ExecutionUnit): void {
-        if (unit == null)
-            return;
-        if (unit.state != Enums.State.Executing)
-            unit.execute();        
+    private execute(): void {
+        this._executionUnits.forEach((unit) => {
+            if (unit.state == Enums.State.Assigned)
+                unit.execute();
+        });
     }
 
-    private _writeBackWait : boolean = false;
+    private writeback(): void {
 
-    private writeback(unit: ExecutionUnit): void {
-        if (unit == null)
-            return;
+        this._executionUnits.forEach((unit) => {
+            if (unit == null) return;
 
-        var destination = unit.destination;
+            var destination = unit.destination;
 
-        if (unit.state == Enums.State.Completed) {
-            this._writeBackWait = false;
+            if (unit.state == Enums.State.Completed) {
+                var result = unit.getResult();
 
-            var result = unit.getResult();
+                /// in the case of store instruction, there is no result
+                /// but we still want to call getResult to reset its state
+                if (result == null)
+                    return;
 
-            /// in the case of store instruction, there is no result
-            /// but we still want to call getResult to reset its state
-            if (result == null)
-                return;
+                this._cpu.RegisterFile[destination].value = result;
+                this._cpu.RegisterFile[destination].set = true;
 
+                //Display.writeLine(this._cpu.RegisterFile[destination]);
 
-            this._cpu.RegisterFile[destination].value = result;
-            this._cpu.RegisterFile[destination].set = true;
+            } else if (unit.state == Enums.State.Executing) {
 
-            //Display.writeLine(this._cpu.RegisterFile[destination]);
-            
-        } else if (unit.state == Enums.State.Executing) {
-            this._writeBackWait = true;
-            Display.writeLine("Result not ready yet. Still executing.", Enums.Style.Error);
-        } else
-            throw "The Execution is somehow in the writeback stage when it shouldn't be.";
+                Display.writeLine("Result not ready yet. Still executing.", Enums.Style.Error);
+            }
+        });
     }
     }
