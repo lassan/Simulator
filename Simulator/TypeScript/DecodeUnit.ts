@@ -1,27 +1,13 @@
 class DecodeUnit {
-    private _executionUnits : ExecutionUnit[];
-    private _registerFile : Register[];
-    private _reservationStation : ReservationStation;
 
-    constructor(executionUnits: ExecutionUnit[], registerFile : Register[], reservationStation: ReservationStation){
-        this._executionUnits = executionUnits;
-        this._registerFile = registerFile;
-        this._reservationStation = reservationStation;
+    constructor() {}
 
-    }
-
-    decode(instruction: Instructions.Instruction) : void {
-        if (instruction == null)
+    decode(instructions: Instructions.Instruction[]): void {
+        if (instructions == null)
             return;
 
-        this._reservationStation.add(instruction);
+        for (var i in instructions) {
+            _cpu.ReservationStation.add(instructions[i]);
+        }
     }
-
-    issue(): void {
-        this._reservationStation.dispatch();
-    }
-
-    isFree(): boolean {
-        return this._reservationStation.isFull();
-    }
-    }
+}

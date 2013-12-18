@@ -1,28 +1,21 @@
 /// <reference path="cpu.ts" />
 /// <reference path="Display.ts" />
 /// <reference path="Enums.ts" />
-
 class Pipeline {
-    private _cpu : CPU;
-    private _instructions : Instructions.Instruction[];
-    private _executionUnits : ExecutionUnit[];
-    private _decodeUnits : DecodeUnit[];
+    private _instructions: Instructions.Instruction[];
 
-    constructor(cpu: CPU, instructions: Instructions.Instruction[],
-        executionUnits: ExecutionUnit[],
-        decodeUnits: DecodeUnit[]) {
-        this._cpu = cpu;
+    constructor(instructions: Instructions.Instruction[]) {
         this._instructions = instructions;
-        this._executionUnits = executionUnits;
-        this._decodeUnits = decodeUnits;
     }
 
     public start(): void {
         var pipelineCounter = 0;
         var instructionCounter = 0;
 
-        var instructions : Instructions.Instruction[] = [null, null, null, null];
-        
+        var instructions: Instructions.Instruction[][] = [null, null, null, null];
+
+        //var instructions : Instructions.Instruction[] = [null, null, null, null];
+
         while (true) {
             this.cycle(instructions);
 
@@ -30,9 +23,9 @@ class Pipeline {
 
             pipelineCounter++;
 
-            Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
+            //Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
-            Display.printArray(instructions, "Instructions");
+            //Display.printArray(instructions, "Instructions");
         }
 
         Display.writeLine("Execution terminated.");
@@ -40,66 +33,83 @@ class Pipeline {
         Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
     }
 
-    private cycle(instructions: Instructions.Instruction[]): void {
+    private cycle(instructions: Instructions.Instruction[][]): void {
         /// <summary>
         ///     This method models one pipeline cycle
         /// </summary>
-        this.sendClockTick(this._executionUnits);
+        this.sendClockTick(_cpu.ExecutionUnits);
 
-        if (!this._decodeUnits[0].isFree()) {
+        if (!_cpu.ReservationStation.isFull()) {
             // delay for when there isn't a free unit
             instructions[3] = instructions[2];
             instructions[2] = instructions[1];
             instructions[1] = instructions[0];
             instructions[0] = null;
+        } else {
+            Display.writeLine("Reservation station full.", Enums.Style.Error);
         }
 
         this.writeback();
 
-        this.sendClockTick(this._executionUnits);
         this.execute();
 
-        this.sendClockTick(this._executionUnits);
-        this._decodeUnits[0].issue();
-        this._decodeUnits[0].decode(instructions[1]);
+        _cpu.ReservationStation.dispatch();
 
-        this.sendClockTick(this._executionUnits);
-        if (!this._decodeUnits[0].isFree()) {
+        instructions[1].forEach((elem, index)=> {
+            _cpu.DecodeUnits[index].decode(elem);
+        });
+
+        if (!_cpu.ReservationStation.isFull()) {
             instructions[0] = this.fetch();
         }
     }
 
-    private isPipelineEmpty(instructions: Instructions.Instruction[]): boolean{
-        var instructionsPresent = instructions.some((elem) => elem != null);
-        var executionsPresent = this._executionUnits.some((elem) => elem.state != Enums.State.Free);
+    private isPipelineEmpty(instructions: Instructions.Instruction[][]): boolean {
+        var instructionsPresent = instructions.some((elem)=> elem != null);
+        var executionsPresent = _cpu.ExecutionUnits.some((elem)=> elem.state != Enums.State.Free);
 
         return !(instructionsPresent || executionsPresent);
     }
 
 
     private sendClockTick(executionUnits: ExecutionUnit[]) {
-        executionUnits.forEach((elem) => {
+        executionUnits.forEach((elem)=> {
             if (elem != null) elem.clockTick();
         });
     }
 
-    private fetch(): Instructions.Instruction {
-        var pc = this._cpu.getProgramCounter();
-        var instruction = pc >= this._instructions.length
-            ? null
-            : this._instructions[pc];
+    private fetch(): Instructions.Instruction[] {
+        var numInstructions = _cpu.Config.getNumFetch();
+        var instructions: Instructions.Instruction[] = [];
+        var pc = _cpu.getProgramCounter();
 
-        if (instruction != null && instruction.type != Enums.ExecutionUnit.BranchUnit) {
-            // if it's not a branch, incremement the program counter
-            // program counter for branches is set in the writeback stage
-            this._cpu.incrementProgramCounter();
+        for (var i = 0; i < numInstructions; i++) {
+            if (pc >= this._instructions.length) {
+                instructions = null;
+                break;
+            } else {
+                {
+                    instructions.push(this._instructions[pc]);
+                    _cpu.incrementProgramCounter();
+                }
+            }
         }
 
-        return instruction;
+        //var instruction = pc >= this._instructions.length
+        //    ? null
+        //    : this._instructions[pc];
+
+        //if (instruction != null && instruction.type != Enums.ExecutionUnit.BranchUnit) {
+        //    // if it's not a branch, incremement the program counter
+        //    // program counter for branches is set in the writeback stage
+        //    this._cpu.incrementProgramCounter();
+        //}
+
+        return instructions;
     }
 
     private execute(): void {
-        this._executionUnits.forEach((unit) => {
+        _cpu.ExecutionUnits.forEach((unit)=> {
             if (unit.state == Enums.State.Assigned)
                 unit.execute();
         });
@@ -107,7 +117,7 @@ class Pipeline {
 
     private writeback(): void {
 
-        this._executionUnits.forEach((unit) => {
+        _cpu.ExecutionUnits.forEach((unit)=> {
             if (unit == null) return;
 
             var destination = unit.destination;
@@ -120,8 +130,8 @@ class Pipeline {
                 if (result == null)
                     return;
 
-                this._cpu.RegisterFile[destination].value = result;
-                this._cpu.RegisterFile[destination].set = true;
+                _cpu.RegisterFile[destination].value = result;
+                _cpu.RegisterFile[destination].set = true;
 
                 //Display.writeLine(this._cpu.RegisterFile[destination]);
 
@@ -131,4 +141,5 @@ class Pipeline {
             }
         });
     }
-    }
+
+}

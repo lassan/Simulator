@@ -1,32 +1,31 @@
 class ReservationStation {
-    private _instructions : Instructions.Instruction[];
-    private _size : number;
-    private _execUnits : ExecutionUnit[];
-    private _registerFile : Register[];
+    private _instructions: Instructions.Instruction[];
+    private _size: number;
 
-    constructor(size: number, execUnits : ExecutionUnit[], registerFile : Register[]) {
+    constructor(size: number) {
         this._instructions = [];
         this._size = size;
-        this._execUnits = execUnits;
-        this._registerFile = registerFile;
     }
 
     add(instruction: Instructions.Instruction) {
         if (this.isFull())
-            throw "Reservation station is full, should not be calling  add()";
+            throw "Reservation station is full, should not be calling add()";
 
+        Display.write("adding: ");
+        Display.writeLine(instruction.toString());
         this._instructions.push(instruction);
+
     }
 
     dispatch() {
         var instructionsToRemove: number[] = [];
 
-        this._instructions.forEach((instruction, index) => {
+        this._instructions.forEach((instruction, index)=> {
 
             if (!this.registersReady(instruction))
                 return;
 
-            var assigned : boolean = false;
+            var assigned: boolean;
 
             switch (instruction.type) {
             case Enums.ExecutionUnit.ArithmeticUnit:
@@ -51,17 +50,17 @@ class ReservationStation {
         }
     }
 
-    dispatchArithmetic(instruction) : boolean{
+    dispatchArithmetic(instruction): boolean {
         var unit = this.getAvailableUnit(instruction);
 
         if (unit == null)
             return false;
 
         else {
-            var operands : number[] = [];
-            var executableOperands : number[] = [];
+            var operands: number[] = [];
+            var executableOperands: number[] = [];
             var destination = instruction.operands[0];
-            this._registerFile[destination].set = false;
+            _cpu.RegisterFile[destination].set = false;
 
 
             for (var i in instruction.operands) {
@@ -73,7 +72,7 @@ class ReservationStation {
                     operands.push(+op);
                 } else {
                     // otherwise fetch the numeric value from the register file
-                    operands.push(this._registerFile[op].value);
+                    operands.push(_cpu.RegisterFile[op].value);
                 }
             }
 
@@ -89,21 +88,21 @@ class ReservationStation {
         }
     }
 
-    dispatchBranch(instruction) : boolean {
+    dispatchBranch(instruction): boolean {
         var unit = this.getAvailableUnit(instruction);
 
         if (unit == null)
             return false;
 
         else {
-            var operands : number[] = [];
+            var operands: number[] = [];
             operands.push(+instruction.operands[0]);
             unit.setInstruction(operands, instruction.name, "pc");
             return true;
         }
     }
 
-    dispatchLoadStore(instruction): boolean  {
+    dispatchLoadStore(instruction): boolean {
         var unit = this.getAvailableUnit(instruction);
 
         if (unit == null)
@@ -117,11 +116,11 @@ class ReservationStation {
                 destination = null;
             else {
                 destination = instruction.operands[0];
-                this._registerFile[destination].set = false;
+                _cpu.RegisterFile[destination].set = false;
             }
 
-            var op1 = this._registerFile[instruction.operands[0]].value;
-            var op2 = this._registerFile[instruction.operands[1]].value;
+            var op1 = _cpu.RegisterFile[instruction.operands[0]].value;
+            var op2  = _cpu.RegisterFile[instruction.operands[1]].value;
 
             operands.push(op1);
             operands.push(op2);
@@ -138,7 +137,7 @@ class ReservationStation {
         ///     Returns a reference to the unit if availalbe
         ///     Returns null otherwise
         /// </summary>
-        var units = this._execUnits;
+        var units = _cpu.ExecutionUnits;
 
 
         for (var j in units) {
@@ -156,7 +155,7 @@ class ReservationStation {
         for (var key in instruction.operands) {
             var elem = instruction.operands[key];
             if (!$.isNumeric(elem)) {
-                if (!this._registerFile[elem].set) {
+                if (!_cpu.RegisterFile[elem].set) {
                     Display.writeLine("Register not set: " + elem, Enums.Style.Error);
                     return false;
                 }
@@ -164,5 +163,4 @@ class ReservationStation {
         }
         return true;
     }
-
-    }
+}

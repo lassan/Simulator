@@ -46,8 +46,6 @@ module Display {
 
             if (elem != null)
                 Display.writeLine(elem.toString());
-            else
-                Display.writeLine("null");
         });
     }
 

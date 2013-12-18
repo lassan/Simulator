@@ -1,18 +1,24 @@
 class Register {
-    constructor(public value: number, public set: boolean) { }
+
+    constructor(public value: number, public set: boolean) {}
 
     public toString() {
         return this.value + " -  " + this.set;
     }
+
 }
 
 class CPU {
-    public RegisterFile : Register[];
-    public Memory : number[];
 
-    constructor() {
-        this.reset();
-    }
+    public RegisterFile: Register[];
+    public Memory: number[];
+    public ExecutionUnits: ExecutionUnit[];
+    public DecodeUnits: DecodeUnit[];
+    public ReservationStation: ReservationStation;
+    public Config: Configuration;
+
+
+    constructor() {}
 
     private initialiseRegisterFile(): void {
         this.RegisterFile = [];
@@ -34,9 +40,19 @@ class CPU {
         this.RegisterFile["st"] = new Register(null, true);
     }
 
+
+    public configure(configuration: Configuration) {
+        this.Config = configuration;
+        this.reset()
+    }
+
+
     public reset(): void {
         this.initialiseRegisterFile();
         this.initialiseMemory();
+        this.initialiseReservationStations();
+        this.initialiseDecodeUnits();
+        this.initialiseExecutionUnits();
     }
 
     private initialiseMemory(): void {
@@ -49,11 +65,41 @@ class CPU {
         this.RegisterFile["pc"].value++;
     }
 
-    public getProgramCounter() : number {
+    public getProgramCounter(): number {
         return this.RegisterFile["pc"].value;
     }
 
-    public setProgramCounter(pc: number) :void {
+    public setProgramCounter(pc: number): void {
         this.RegisterFile["pc"].value = pc;
     }
+
+    initialiseDecodeUnits() {
+        this.DecodeUnits = [];
+        for (var i = 0; i < this.Config.getNumDecode(); i++) {
+            var dUnit = new DecodeUnit();
+            this.DecodeUnits.push(dUnit);
+        }
     }
+
+    initialiseExecutionUnits() {
+        this.ExecutionUnits = [];
+        for (var i = 0; i < this.Config.getNumAlu(); i++) {
+            this.ExecutionUnits.push(new ArithmeticUnit());
+        }
+        for (var j = 0; j < this.Config.getNumLoadStore(); j++) {
+            var mUnit = new MemoryUnit();
+            mUnit.setMemory(this.Memory);
+            this.ExecutionUnits.push(mUnit);
+        }
+        for (var k = 0; k < this.Config.getNumBranch(); k++) {
+            var bUnit = new BranchUnit();
+            bUnit.setRegisterFile(this.RegisterFile);
+            this.ExecutionUnits.push(bUnit);
+        }
+    }
+
+    initialiseReservationStations() {
+        this.ReservationStation = new ReservationStation(this.Config.getSizeRS());
+    }
+
+}
