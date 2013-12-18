@@ -1,6 +1,7 @@
 module Display {
+
     export function write(text: string, type?: Enums.Style): void {
-        var typeClass : string = '';
+        var typeClass: string;
 
         if (type == null)
             typeClass = GetTypeClass(Enums.Style.Normal);
@@ -17,7 +18,7 @@ module Display {
     }
 
     export function writeLine(text: string, type?: Enums.Style): void {
-        var typeClass : string = '';
+        var typeClass: string;
 
         if (type == null)
             typeClass = GetTypeClass(Enums.Style.Normal);
@@ -37,16 +38,19 @@ module Display {
         $('#console div').text("");
     }
 
-    export function printArray(array: any[], heading: string): void {
+    export function printArray(array: any, heading: string): void {
         Display.writeLine(heading);
 
-        array.forEach((elem, index) => {
-            Display.write(index.toString() +
+        var i = 0;
+        for (var key in array) {
+            Display.write(i +
                 ":&nbsp;&nbsp;&nbsp;&nbsp;", Enums.Style.Instrumentation);
 
-            if (elem != null)
-                Display.writeLine(elem.toString());
-        });
+            if (array[key] != null)
+                Display.writeLine(array[key].toString());
+
+            i++;
+        }
     }
 
     export function clearTables() {
@@ -54,12 +58,12 @@ module Display {
         ClearTable("#memoryTable");
     }
 
-    export function updateRegisterTable(registerFile: Register[]) : void {
+    export function updateRegisterTable(registerFile: Register[]): void {
         /// <summary>
         ///     Updates the table with register value on the webpage with the latest values
         /// </summary>
         var $trs = $('#registerTable tbody tr');
-        $trs.each(function(i, tr) {
+        $trs.each((i, tr)=> {
             var td0 = $(tr).find('td')[0];
             var td1 = $(tr).find('td')[1];
 
@@ -69,9 +73,9 @@ module Display {
         });
     }
 
-    export function updateMemoryTable(cpu : CPU) : void {
+    export function updateMemoryTable(cpu: CPU): void {
         var $trs = $('#memoryTable tbody tr');
-        $trs.each(function(i, tr) {
+        $trs.each((i, tr)=> {
             var td0 = $(tr).find('td')[0];
             var td1 = $(tr).find('td')[1];
 
@@ -86,9 +90,9 @@ module Display {
     function ClearTable(tableName: string) {
         var selector = tableName + " tbody tr";
         var $trs = $(selector);
-        $trs.each((i, tr) => {
+        $trs.each((i, tr)=> {
             var td1 = $(tr).find('td')[1];
-                $(td1).text('');
+            $(td1).text('');
         });
     }
 
@@ -99,8 +103,9 @@ module Display {
     }
 
     function GetTypeClass(type: Enums.Style): string {
-        var typeClass : string = "c_";
+        var typeClass: string = "c_";
 
         return typeClass.concat(Enums.Style[type].toLowerCase());
     }
+
 }

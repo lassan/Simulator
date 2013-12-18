@@ -17,15 +17,13 @@ class Pipeline {
         //var instructions : Instructions.Instruction[] = [null, null, null, null];
 
         while (true) {
+            Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
+
             this.cycle(instructions);
 
             if (this.isPipelineEmpty(instructions)) break;
 
             pipelineCounter++;
-
-            //Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
-
-            //Display.printArray(instructions, "Instructions");
         }
 
         Display.writeLine("Execution terminated.");
@@ -39,6 +37,8 @@ class Pipeline {
         /// </summary>
         this.sendClockTick(_cpu.ExecutionUnits);
 
+        Display.updateRegisterTable(_cpu.RegisterFile);
+        
         if (!_cpu.ReservationStation.isFull()) {
             // delay for when there isn't a free unit
             instructions[3] = instructions[2];
@@ -55,9 +55,7 @@ class Pipeline {
 
         _cpu.ReservationStation.dispatch();
 
-        instructions[1].forEach((elem, index)=> {
-            _cpu.DecodeUnits[index].decode(elem);
-        });
+        this.decode(instructions[1]);
 
         if (!_cpu.ReservationStation.isFull()) {
             instructions[0] = this.fetch();
@@ -71,7 +69,6 @@ class Pipeline {
         return !(instructionsPresent || executionsPresent);
     }
 
-
     private sendClockTick(executionUnits: ExecutionUnit[]) {
         executionUnits.forEach((elem)=> {
             if (elem != null) elem.clockTick();
@@ -81,31 +78,30 @@ class Pipeline {
     private fetch(): Instructions.Instruction[] {
         var numInstructions = _cpu.Config.getNumFetch();
         var instructions: Instructions.Instruction[] = [];
-        var pc = _cpu.getProgramCounter();
-
+        
         for (var i = 0; i < numInstructions; i++) {
-            if (pc >= this._instructions.length) {
-                instructions = null;
+            if (_cpu.getProgramCounter() >= this._instructions.length) {
                 break;
             } else {
                 {
-                    instructions.push(this._instructions[pc]);
+                    instructions.push(this._instructions[_cpu.getProgramCounter()]);
                     _cpu.incrementProgramCounter();
                 }
             }
         }
+        if (instructions.length < 1)
+            return null;
+        else 
+            return instructions;
+    }
 
-        //var instruction = pc >= this._instructions.length
-        //    ? null
-        //    : this._instructions[pc];
+    private decode(instructions: Instructions.Instruction[]): void {
+        if (instructions == null)
+            return;
 
-        //if (instruction != null && instruction.type != Enums.ExecutionUnit.BranchUnit) {
-        //    // if it's not a branch, incremement the program counter
-        //    // program counter for branches is set in the writeback stage
-        //    this._cpu.incrementProgramCounter();
-        //}
-
-        return instructions;
+        instructions.forEach((elem, index) => {
+            _cpu.DecodeUnits[index].decode(elem);
+        });
     }
 
     private execute(): void {
@@ -135,9 +131,6 @@ class Pipeline {
 
                 //Display.writeLine(this._cpu.RegisterFile[destination]);
 
-            } else if (unit.state == Enums.State.Executing) {
-
-                Display.writeLine("Result not ready yet. Still executing.", Enums.Style.Error);
             }
         });
     }

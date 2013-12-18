@@ -14,11 +14,10 @@ class ReservationStation {
         Display.write("adding: ");
         Display.writeLine(instruction.toString());
         this._instructions.push(instruction);
-
     }
 
     dispatch() {
-        var instructionsToRemove: number[] = [];
+        var instructionsIssued: Instructions.Instruction[] = [];
 
         this._instructions.forEach((instruction, index)=> {
 
@@ -38,16 +37,23 @@ class ReservationStation {
                 assigned = this.dispatchLoadStore(instruction);
                 break;
             default:
-                throw "What, are you crazy?";
+                throw Error("What, are you crazy?");
             }
 
             if (assigned)
-                instructionsToRemove.push(index);
+                instructionsIssued.push(instruction);
+            else
+                Display.writeLine("No unit available for: " + instruction.toString(), Enums.Style.Error);
         });
 
-        for (var i in instructionsToRemove) {
-            this._instructions.splice(instructionsToRemove[i], 1);
+        if (instructionsIssued.length > 0)
+            Display.printArray(instructionsIssued, "Instructions Issued");
+
+        for (var i in instructionsIssued) {
+            this._instructions.splice($.inArray(instructionsIssued[i], this._instructions), 1);
         }
+
+
     }
 
     dispatchArithmetic(instruction): boolean {
@@ -120,7 +126,7 @@ class ReservationStation {
             }
 
             var op1 = _cpu.RegisterFile[instruction.operands[0]].value;
-            var op2  = _cpu.RegisterFile[instruction.operands[1]].value;
+            var op2 = _cpu.RegisterFile[instruction.operands[1]].value;
 
             operands.push(op1);
             operands.push(op2);
@@ -138,7 +144,6 @@ class ReservationStation {
         ///     Returns null otherwise
         /// </summary>
         var units = _cpu.ExecutionUnits;
-
 
         for (var j in units) {
             if (units[j].type == instruction.type && units[j].state == Enums.State.Free)
@@ -163,4 +168,5 @@ class ReservationStation {
         }
         return true;
     }
+
 }

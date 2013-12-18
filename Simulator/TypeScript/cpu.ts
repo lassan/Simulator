@@ -17,7 +17,6 @@ class CPU {
     public ReservationStation: ReservationStation;
     public Config: Configuration;
 
-
     constructor() {}
 
     private initialiseRegisterFile(): void {
@@ -43,7 +42,7 @@ class CPU {
 
     public configure(configuration: Configuration) {
         this.Config = configuration;
-        this.reset()
+        this.reset();
     }
 
 

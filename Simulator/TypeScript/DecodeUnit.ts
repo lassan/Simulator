@@ -2,12 +2,10 @@ class DecodeUnit {
 
     constructor() {}
 
-    decode(instructions: Instructions.Instruction[]): void {
-        if (instructions == null)
+    decode(instruction: Instructions.Instruction): void {
+        if (instruction == null)
             return;
 
-        for (var i in instructions) {
-            _cpu.ReservationStation.add(instructions[i]);
-        }
+        _cpu.ReservationStation.add(instruction);
     }
 }
