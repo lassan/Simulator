@@ -59,6 +59,7 @@
     <Content Include="StyleSheets\style.css" />
     <Content Include="Scripts\watch.js" />
     <TypeScriptCompile Include="TypeScript\RegisterFile.ts" />
+    <TypeScriptCompile Include="TypeScript\ReOrderBuffer.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStation.ts" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 class CPU {
 
     public RegisterFile: RegisterFile;
+    public ReOrderBuffer : ReOrderBuffer;
     public Memory: number[];
     public ExecutionUnits: ExecutionUnit[];
     public DecodeUnits: DecodeUnit[];
@@ -10,19 +11,14 @@ class CPU {
 
     constructor() {}
 
-    private initialiseRegisterFile(): void {
-        this.RegisterFile = new RegisterFile();
-    }
-
-
     public configure(configuration: Configuration) {
         this.Config = configuration;
         this.reset();
     }
 
-
     public reset(): void {
         this.initialiseRegisterFile();
+        this.initialiseReOrderBuffer();
         this.initialiseMemory();
         this.initialiseReservationStations();
         this.initialiseDecodeUnits();
@@ -45,6 +41,14 @@ class CPU {
 
     public setProgramCounter(pc: number): void {
         this.RegisterFile["pc"].value = pc;
+    }
+
+    initialiseReOrderBuffer(): void {
+        this.ReOrderBuffer = new ReOrderBuffer();
+    }
+
+    initialiseRegisterFile(): void {
+        this.RegisterFile = new RegisterFile();
     }
 
     initialiseDecodeUnits() {
