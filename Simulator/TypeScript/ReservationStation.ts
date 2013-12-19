@@ -11,8 +11,6 @@ class ReservationStation {
         if (this.isFull())
             throw "Reservation station is full, should not be calling add()";
 
-        Display.write("adding: ");
-        Display.writeLine(instruction.toString());
         this._instructions.push(instruction);
     }
 
@@ -47,7 +45,7 @@ class ReservationStation {
         });
 
         if (instructionsIssued.length > 0)
-            Display.printArray(instructionsIssued, "Instructions Issued");
+            Display.printArray(instructionsIssued, "Instructions Dispatched");
 
         for (var i in instructionsIssued) {
             this._instructions.splice($.inArray(instructionsIssued[i], this._instructions), 1);
@@ -154,6 +152,10 @@ class ReservationStation {
 
     isFull() {
         return this._instructions.length >= this._size;
+    }
+
+    isEmpty() {
+        return this._instructions.length == 0;
     }
 
     private registersReady(instruction: Instructions.Instruction): boolean {

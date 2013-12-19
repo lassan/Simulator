@@ -187,7 +187,7 @@
                     </table>
                 </div>
                 
-                <div class="section">
+                <div class="section" id="configuration">
                     <h3>Configuration</h3>
                     <div>
                         Number of units: <br/>
@@ -200,7 +200,7 @@
                     </div>
                 </div>
 
-                <div class="section rightMostSection" 
+                <div class="section" 
                      id="assemblyInputDiv">
                     <h3>Control</h3>
                     <div>
@@ -236,12 +236,21 @@
                         </select>
                         <textarea></textarea>
                         <button id="executeButton">Execute</button>
-                        <button id="executeNextButton">Execute Next Instruction</button>
                     </div>
                 </div>
-            </div>
+                <div class="section rightMostSection">
+                    <h3>Known Issues</h3>
+                    <div>
+                        <ul>
+                            <li>If the reservation stataion gets full, the processor will crash.</li>
+                        </ul>
+                    </div>
+                </div>
 
-            <div id="consoleSeperator"> </div>
+            </div>
+          
+            <hr/>
+            <!--<div id="consoleSeperator"> </div>-->
             
             <div class="section leftMostSection" id="console">
                 <h3>Output</h3>

@@ -39,7 +39,7 @@ module Display {
     }
 
     export function printArray(array: any, heading: string): void {
-        Display.writeLine(heading);
+        Display.writeLine(heading, Enums.Style.Heading);
 
         var i = 0;
         for (var key in array) {

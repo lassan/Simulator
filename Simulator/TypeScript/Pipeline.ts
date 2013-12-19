@@ -9,19 +9,37 @@ class Pipeline {
     }
 
     public start(): void {
-        var pipelineCounter = 0;
+        var pipelineCounter = 1;
         var instructionCounter = 0;
 
-        var instructions: Instructions.Instruction[][] = [null, null, null, null];
+        var instructions: Instructions.Instruction[] = [];
 
         //var instructions : Instructions.Instruction[] = [null, null, null, null];
 
         while (true) {
             Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
-            this.cycle(instructions);
+            this.sendClockTick(_cpu.ExecutionUnits);
 
-            if (this.isPipelineEmpty(instructions)) break;
+            //Writeback stage
+            this.writeback();
+
+            //Execute stage
+            this.execute();
+
+            _cpu.ReservationStation.dispatch();
+
+            //Decode and issue stage
+            this.decode(instructions);
+
+            //Fetch stage
+            if (!_cpu.ReservationStation.isFull()) {
+                instructions = this.fetch();
+            }
+
+            Display.writeLine('');
+
+            if (this.canPipelineStop(instructions)) break;
 
             pipelineCounter++;
         }
@@ -31,42 +49,32 @@ class Pipeline {
         Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
     }
 
-    private cycle(instructions: Instructions.Instruction[][]): void {
-        /// <summary>
-        ///     This method models one pipeline cycle
-        /// </summary>
-        this.sendClockTick(_cpu.ExecutionUnits);
+    //private cycle(instructions: Instructions.Instruction[]): void {
+    //    /// <summary>
+    //    ///     This method models one pipeline cycle
+    //    /// </summary>
+    //    this.sendClockTick(_cpu.ExecutionUnits);
 
-        Display.updateRegisterTable(_cpu.RegisterFile);
-        
-        if (!_cpu.ReservationStation.isFull()) {
-            // delay for when there isn't a free unit
-            instructions[3] = instructions[2];
-            instructions[2] = instructions[1];
-            instructions[1] = instructions[0];
-            instructions[0] = null;
-        } else {
-            Display.writeLine("Reservation station full.", Enums.Style.Error);
-        }
+    //    this.writeback();
 
-        this.writeback();
+    //    this.execute();
 
-        this.execute();
+    //    _cpu.ReservationStation.dispatch();
 
-        _cpu.ReservationStation.dispatch();
+    //    this.decode(instructions);
 
-        this.decode(instructions[1]);
+    //    if (!_cpu.ReservationStation.isFull()) {
+    //        instructions = this.fetch();
+    //    }
+    //}
 
-        if (!_cpu.ReservationStation.isFull()) {
-            instructions[0] = this.fetch();
-        }
-    }
+    private canPipelineStop(instructions: Instructions.Instruction[]): boolean {
 
-    private isPipelineEmpty(instructions: Instructions.Instruction[][]): boolean {
         var instructionsPresent = instructions.some((elem)=> elem != null);
+
         var executionsPresent = _cpu.ExecutionUnits.some((elem)=> elem.state != Enums.State.Free);
 
-        return !(instructionsPresent || executionsPresent);
+        return !(instructionsPresent || executionsPresent || !_cpu.ReservationStation.isEmpty());
     }
 
     private sendClockTick(executionUnits: ExecutionUnit[]) {
@@ -78,7 +86,7 @@ class Pipeline {
     private fetch(): Instructions.Instruction[] {
         var numInstructions = _cpu.Config.getNumFetch();
         var instructions: Instructions.Instruction[] = [];
-        
+
         for (var i = 0; i < numInstructions; i++) {
             if (_cpu.getProgramCounter() >= this._instructions.length) {
                 break;
@@ -89,50 +97,60 @@ class Pipeline {
                 }
             }
         }
-        if (instructions.length < 1)
-            return null;
-        else 
-            return instructions;
+        Display.printArray(instructions, "Instructions Fetched");
+        return instructions;
     }
 
     private decode(instructions: Instructions.Instruction[]): void {
-        if (instructions == null)
-            return;
-
-        instructions.forEach((elem, index) => {
-            _cpu.DecodeUnits[index].decode(elem);
+        instructions.forEach((elem, index)=> {
+            if (elem != null)
+                _cpu.DecodeUnits[index].decode(elem);
         });
+        Display.printArray(instructions, "Instructions Decoded");
     }
 
     private execute(): void {
+        var units: ExecutionUnit[] = [];
+
         _cpu.ExecutionUnits.forEach((unit)=> {
             if (unit.state == Enums.State.Assigned)
-                unit.execute();
+            //unit.execute();
+                units.push(unit);
         });
+
+        for (var i in units) {
+            units[i].execute();
+        }
+
+        Display.printArray(units, "Units Executed");
     }
 
     private writeback(): void {
+        var units: ExecutionUnit[] = [];
 
         _cpu.ExecutionUnits.forEach((unit)=> {
             if (unit == null) return;
 
-            var destination = unit.destination;
-
-            if (unit.state == Enums.State.Completed) {
-                var result = unit.getResult();
-
-                /// in the case of store instruction, there is no result
-                /// but we still want to call getResult to reset its state
-                if (result == null)
-                    return;
-
-                _cpu.RegisterFile[destination].value = result;
-                _cpu.RegisterFile[destination].set = true;
-
-                //Display.writeLine(this._cpu.RegisterFile[destination]);
-
-            }
+            if (unit.state == Enums.State.Completed)
+                units.push(unit);
         });
+
+        Display.printArray(units, "Units writtenback");
+
+        for (var i in units) {
+            var destination = units[i].destination;
+
+            var result = units[i].getResult();
+            /// in the case of store instruction, there is no result
+            /// but we still want to call getResult to reset its state
+            if (result == null)
+                return;
+
+            _cpu.RegisterFile[destination].value = result;
+            _cpu.RegisterFile[destination].set = true;
+
+            //Display.writeLine(this._cpu.RegisterFile[destination]);
+        }
     }
 
 }

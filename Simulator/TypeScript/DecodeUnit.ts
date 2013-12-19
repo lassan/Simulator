@@ -1,5 +1,6 @@
 class DecodeUnit {
 
+    
     constructor() {}
 
     decode(instruction: Instructions.Instruction): void {

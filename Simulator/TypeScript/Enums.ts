@@ -8,6 +8,6 @@ module Enums {
     }
 
     export enum Style {
-        Normal, Error, Instrumentation
+        Normal, Error, Instrumentation, Heading
     }
 }
