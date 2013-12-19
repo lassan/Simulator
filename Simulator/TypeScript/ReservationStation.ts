@@ -1,11 +1,4 @@
-class ReservationStationEntry {
-    public robEntry: ReOrderBufferEntry;
-    public operands: any[] = [];
-
-    public toString() {
-        return "[operands: " + this.operands.toString() + ", " + "robEntry: " + this.robEntry.toString() + "]";
-    }
-}
+///<reference path="DecodeUnit.ts"/>
 
 class ReservationStation {
     private _entries: ReservationStationEntry[];

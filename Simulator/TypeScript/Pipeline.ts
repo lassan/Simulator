@@ -135,6 +135,11 @@ class Pipeline {
 
             //Display.writeLine(this._cpu.RegisterFile[destination]);
         }
+
+        //If there are any instructions of the ADD r1 r1 r0 variety where dst and src are the same, 
+        //set the value in the re-order buffer to null;
+
+
     }
 
     private commit(): void {
@@ -149,7 +154,8 @@ class Pipeline {
                 //and has been written back, so commit the result to the registerFIle
                 committed.push(buffer[i]);
 
-                _cpu.RegisterFile[buffer[i].destination].value = buffer[i].value;
+
+                    _cpu.RegisterFile[buffer[i].destination].value = buffer[i].value;
             } else {
                 break;
             }

@@ -64,9 +64,12 @@ class CPU {
             this.ExecutionUnits.push(new ArithmeticUnit());
         }
         for (var j = 0; j < this.Config.getNumLoadStore(); j++) {
-            var mUnit = new MemoryUnit();
-            mUnit.setMemory(this.Memory);
-            this.ExecutionUnits.push(mUnit);
+            var lUnit = new LoadUnit();
+            this.ExecutionUnits.push(lUnit);
+        }
+        for (var j = 0; j < this.Config.getNumLoadStore(); j++) {
+            var sUnit = new StoreUnit();
+            this.ExecutionUnits.push(sUnit);
         }
         for (var k = 0; k < this.Config.getNumBranch(); k++) {
             var bUnit = new BranchUnit();

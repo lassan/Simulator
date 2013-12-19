@@ -72,13 +72,13 @@ module Instructions {
     export class LDR extends Instruction {
         name = "ldr";
         numOperands = 2;
-        type = Enums.ExecutionUnit.MemoryUnit;
+        type = Enums.ExecutionUnit.LoadUnit;
         }
 
     export class STR extends Instruction {
         name = "str";
         numOperands = 2;
-        type = Enums.ExecutionUnit.MemoryUnit;
+        type = Enums.ExecutionUnit.StoreUnit;
         }
 
     /***************************************/

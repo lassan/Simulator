@@ -4,7 +4,7 @@ module Enums {
     }
 
     export enum ExecutionUnit {
-        BranchUnit, MemoryUnit, ArithmeticUnit
+        BranchUnit, LoadUnit, StoreUnit, ArithmeticUnit
     }
 
     export enum Style {

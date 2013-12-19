@@ -1,4 +1,6 @@
+/// <reference path="DecodeUnit.ts" />
 class ExecutionUnit {
+
     constructor() {
         this.state = Enums.State.Free;
         this.setUnitType();
@@ -19,15 +21,10 @@ class ExecutionUnit {
 
     getResult(): number {
         if (this.delay == 0) {
-            this.state = Enums.State.Free;
             var resultToReturn = this.result;
-            this.delay = null;
-            this.result = null;
-            this.operands = null;
-            this.operation = null;
-            this.destination = null;
+            this.resetExecutionUnit();
             return resultToReturn;
-        } else throw "Execution Unit has not yet completed execution";
+        } else throw this._notCompletedError;
     }
 
     clockTick(): void {
@@ -39,9 +36,19 @@ class ExecutionUnit {
 
     setUnitType(): void { throw "setUnitType function not overridden"; }
 
+    resetExecutionUnit() {
+        this.state = Enums.State.Free;
+        this.delay = null;
+        this.result = null;
+        this.operands = null;
+        this.operation = null;
+        this.destination = null;
+    }
+
+
     toString(): string {
         return Enums.ExecutionUnit[this.type] + ' - ' +
-             this.operation +
+            this.operation +
             ', state: ' + Enums.State[this.state] +
             ', delay: ' + this.delay +
             ', operands: ' + this.operands +
@@ -50,15 +57,18 @@ class ExecutionUnit {
     }
 
     public state: Enums.State;
-    public type : Enums.ExecutionUnit;
-    public delay : number;
-    public operands : number[];
-    public operation : string;
-    public result : number;
-    public destination : ReOrderBufferEntry;
-    }
+    public type: Enums.ExecutionUnit;
+    public delay: number;
+    public operands: number[];
+    public operation: string;
+    public result: number;
+    public destination: ReOrderBufferEntry;
+
+    public _notCompletedError = Error("Execution Unit has not yet completed execution");
+}
 
 class ArithmeticUnit extends ExecutionUnit {
+
     setUnitType(): void {
         this.type = Enums.ExecutionUnit.ArithmeticUnit;
     }
@@ -67,35 +77,35 @@ class ArithmeticUnit extends ExecutionUnit {
         this.delay = 1;
         this.result = this.operands[0];
     }
-    
+
     add(): void {
         this.delay = 1;
-        this.result = this.operands[0] + this.operands[1];
+        this.result = +this.operands[0] + +this.operands[1];
     }
 
     addi(): void {
         this.delay = 1;
-        this.result = this.operands[0] + this.operands[1];
+        this.result = +this.operands[0] + +this.operands[1];
     }
 
     sub(): void {
         this.delay = 1;
-        this.result = this.operands[0] - this.operands[1];
+        this.result = +this.operands[0] - +this.operands[1];
     }
 
     subi(): void {
         this.delay = 1;
-        this.result = this.operands[0] - this.operands[1];
+        this.result = +this.operands[0] - +this.operands[1];
     }
 
     mul(): void {
         this.delay = 4;
-        this.result = this.operands[0] * this.operands[1];
+        this.result = +this.operands[0] * +this.operands[1];
     }
 
     cmp(): void {
         this.delay = 2;
-        var comparison = this.operands[0] - this.operands[1];
+        var comparison = +this.operands[0] - +this.operands[1];
 
         if (comparison < 0)
             this.result = 0x00;
@@ -106,49 +116,11 @@ class ArithmeticUnit extends ExecutionUnit {
         if (comparison >= 0)
             this.result = 0x03;
     }
-    }
 
-class MemoryUnit extends ExecutionUnit {
-    private _memory : number[] = null;
-
-    setUnitType(): void {
-        this.type = Enums.ExecutionUnit.MemoryUnit;
-    }
-
-    setMemory(memory : number[]): void {
-        this._memory = memory;
-    }
-
-    ldr(): void {
-        /// <summary>
-        ///     LDR dst src - memory address in src, contents of memory will be stored in dst
-        /// </summary>
-        this.delay = 4;
-        var address = this.operands[1];
-        this.result = this._memory[address];
-    }
-
-    str(): void {
-        /// <summary>
-        ///     STR address data - data to store in src, memory address to store to in dst
-        /// </summary>
-        this.delay = 4;
-        var data = this.operands[1];
-
-        if (data == null)
-            throw "Store data is null";
-
-        var address = this.operands[0];
-        if (address == null)
-            throw "Store address is null";
-
-
-        this._memory[address] = data;
-    }
-    }
+}
 
 class BranchUnit extends ExecutionUnit {
-    private _registerFile : RegisterFile;
+    private _registerFile: RegisterFile;
 
     setUnitType(): void {
         this.type = Enums.ExecutionUnit.BranchUnit;
@@ -178,4 +150,66 @@ class BranchUnit extends ExecutionUnit {
     blt(): void {
         this.delay = 1;
     }
+
+}
+
+class LoadUnit extends ExecutionUnit {
+
+    private _address;
+
+    setUnitType(): void {
+        this.type = Enums.ExecutionUnit.LoadUnit;
     }
+
+    ldr(): void {
+        /// <summary>
+        ///     LDR dst src - memory address in src, contents of memory will be stored in dst
+        /// </summary>
+        this.delay = 4;
+        this._address = this.operands[0];
+    }
+
+    getResult(): number {
+        if (this.delay == 0) {
+            this.resetExecutionUnit();
+            return _cpu.Memory[this._address]; // return the data
+        } else throw this._notCompletedError;
+    }
+
+}
+
+class StoreUnit extends ExecutionUnit {
+
+    setUnitType(): void {
+        this.type = Enums.ExecutionUnit.StoreUnit;
+    }
+
+    private address: number;
+    private data: number;
+
+    str(): void {
+        /// <summary>
+        ///     STR address data - data to store in src, memory address to store to in dst
+        /// </summary>
+        this.delay = 4;
+        this.data = this.operands[1];
+
+        if (this.data == null)
+            throw Error("Store data is null");
+
+        this.address = this.operands[0];
+        if (this.address == null)
+            throw Error("Store address is null");
+
+        this.result = this.data;
+    }
+
+    getResult(): number {
+        if (this.delay == 0) {
+            _cpu.Memory[this.address] = this.data;
+            this.resetExecutionUnit();
+            return this.address; //this ensures that the value of the destination doesn't change
+        } else throw this._notCompletedError;
+    }
+
+}

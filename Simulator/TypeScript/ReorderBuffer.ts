@@ -32,14 +32,16 @@ class ReOrderBuffer {
 
     tryGetExistingEntry(register: string): ReOrderBufferEntry {
         /// <summary>
-        ///     Returns a ReOrderBufferEntry that contains the specified register as it's destination.
+        ///     Returns the last ReOrderBufferEntry that contains the specified register as it's destination.
         ///     if none exists, returns null;
         /// </summary>
+        var entry: ReOrderBufferEntry = null;
+
         for (var key in this.array) {
             if (this.array[key].destination == register)
-                return this.array[key];
+                entry =  this.array[key];
         }
-        return null;
+        return entry;
     }
 
     isEmpty() {
