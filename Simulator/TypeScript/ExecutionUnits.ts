@@ -4,10 +4,10 @@ class ExecutionUnit {
         this.setUnitType();
     }
 
-    setInstruction(operands: number[], operation: string, destination: string): void {
-        this.operands = operands;
-        this.operation = operation;
-        this.destination = destination;
+    setInstruction(rsEntry: ReservationStationEntry): void {
+        this.operands = rsEntry.operands;
+        this.operation = rsEntry.robEntry.instruction.name;
+        this.destination = rsEntry.robEntry;
         this.result = null;
         this.state = Enums.State.Assigned;
     }
@@ -55,7 +55,7 @@ class ExecutionUnit {
     public operands : number[];
     public operation : string;
     public result : number;
-    public destination : string;
+    public destination : ReOrderBufferEntry;
     }
 
 class ArithmeticUnit extends ExecutionUnit {

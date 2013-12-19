@@ -1,8 +1,7 @@
-
 class CPU {
 
     public RegisterFile: RegisterFile;
-    public ReOrderBuffer : ReOrderBuffer;
+    public ReOrderBuffer: ReOrderBuffer;
     public Memory: number[];
     public ExecutionUnits: ExecutionUnit[];
     public DecodeUnits: DecodeUnit[];

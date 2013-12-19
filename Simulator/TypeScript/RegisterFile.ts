@@ -1,12 +1,10 @@
 class Register {
-
     constructor(public value: number, public set: boolean) { }
 
     public toString() {
         return this.value + " -  " + this.set;
     }
 }
-
 
 class RegisterFile {
     public r0: Register;
@@ -44,5 +42,4 @@ class RegisterFile {
         this.pc = new Register(0, true);
         this.st = new Register(null, true);
     }
-
 }

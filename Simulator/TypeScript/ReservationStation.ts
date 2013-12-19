@@ -1,146 +1,80 @@
+class ReservationStationEntry {
+    public robEntry: ReOrderBufferEntry;
+    public operands: any[] = [];
+
+    public toString() {
+        return "[operands: " + this.operands.toString() + ", " + "robEntry: " + this.robEntry.toString() + "]";
+    }
+}
+
 class ReservationStation {
-    private _instructions: Instructions.Instruction[];
+    private _entries: ReservationStationEntry[];
     private _size: number;
 
     constructor(size: number) {
-        this._instructions = [];
+        this._entries = [];
         this._size = size;
     }
 
-    add(instruction: Instructions.Instruction) {
+    add(rsEntry: ReservationStationEntry) {
         if (this.isFull())
             throw "Reservation station is full, should not be calling add()";
 
-        this._instructions.push(instruction);
+        this._entries.push(rsEntry);
     }
 
-    dispatch() {
-        var instructionsIssued: Instructions.Instruction[] = [];
+    dispatch() : void{
+        var dispatched: ReservationStationEntry[] = [];
+        
+        this._entries.forEach((entry, index)=> {
+            var dispatchable: boolean = true;
+            for (var i in entry.operands) {
 
-        this._instructions.forEach((instruction, index)=> {
+                if (entry.operands[i] instanceof ReOrderBufferEntry) {
+                    //if the operand is a reference to a re order buffer entry, check if buffer contains value now
+                    var robEntry = entry.operands[i];
 
-            if (!this.registersReady(instruction))
-                return;
-
-            var assigned: boolean;
-
-            switch (instruction.type) {
-            case Enums.ExecutionUnit.ArithmeticUnit:
-                assigned = this.dispatchArithmetic(instruction);
-                break;
-            case Enums.ExecutionUnit.BranchUnit:
-                assigned = this.dispatchBranch(instruction);
-                break;
-            case Enums.ExecutionUnit.MemoryUnit:
-                assigned = this.dispatchLoadStore(instruction);
-                break;
-            default:
-                throw Error("What, are you crazy?");
-            }
-
-            if (assigned)
-                instructionsIssued.push(instruction);
-            else
-                Display.writeLine("No unit available for: " + instruction.toString(), Enums.Style.Error);
-        });
-
-        if (instructionsIssued.length > 0)
-            Display.printArray(instructionsIssued, "Instructions Dispatched");
-
-        for (var i in instructionsIssued) {
-            this._instructions.splice($.inArray(instructionsIssued[i], this._instructions), 1);
-        }
-
-
-    }
-
-    dispatchArithmetic(instruction): boolean {
-        var unit = this.getAvailableUnit(instruction);
-
-        if (unit == null)
-            return false;
-
-        else {
-            var operands: number[] = [];
-            var executableOperands: number[] = [];
-            var destination = instruction.operands[0];
-            _cpu.RegisterFile[destination].set = false;
-
-
-            for (var i in instruction.operands) {
-                var op = instruction.operands[i];
-
-                if ($.isNumeric(op)) {
-                    // If the operand is a number, send it to execution units directly
-                    // This situtation occurs in the case of immediate instructions
-                    operands.push(+op);
-                } else {
-                    // otherwise fetch the numeric value from the register file
-                    operands.push(_cpu.RegisterFile[op].value);
+                    if ($.isNumeric(robEntry.value))
+                        entry.operands[i] = robEntry.value;
+                }
+                
+                if (!$.isNumeric(entry.operands[i])) {
+                    dispatchable = false;
+                    break;
                 }
             }
 
-            if (instruction.numOperands == 2) {
-                executableOperands.push(operands[1]);
-            } else if (instruction.numOperands == 3) {
-                executableOperands.push(operands[1]);
-                executableOperands.push(operands[2]);
+            if (dispatchable) {
+                var unit = this.getAvailableUnit(entry);
+                if (unit == null)
+                    return;
+                else {
+                    unit.setInstruction(entry);
+                    dispatched.push(entry);
+                }
             }
+        });
 
-            unit.setInstruction(executableOperands, instruction.name, destination);
-            return true;
+
+        Display.printArray(dispatched, "RS Entries Dispatched");
+
+        for (var i in dispatched) {
+            this._entries.splice($.inArray(dispatched[i], this._entries), 1);
         }
     }
 
-    dispatchBranch(instruction): boolean {
-        var unit = this.getAvailableUnit(instruction);
-
-        if (unit == null)
-            return false;
-
-        else {
-            var operands: number[] = [];
-            operands.push(+instruction.operands[0]);
-            unit.setInstruction(operands, instruction.name, "pc");
-            return true;
-        }
+    updateOperands() {
+        
     }
 
-    dispatchLoadStore(instruction): boolean {
-        var unit = this.getAvailableUnit(instruction);
-
-        if (unit == null)
-            return false;
-        else {
-            var operands: number[] = [];
-
-            var destination: string;
-
-            if (instruction instanceof Instructions.STR)
-                destination = null;
-            else {
-                destination = instruction.operands[0];
-                _cpu.RegisterFile[destination].set = false;
-            }
-
-            var op1 = _cpu.RegisterFile[instruction.operands[0]].value;
-            var op2 = _cpu.RegisterFile[instruction.operands[1]].value;
-
-            operands.push(op1);
-            operands.push(op2);
-            unit.setInstruction(operands, instruction.name, destination);
-
-            return true;
-        }
-
-    }
-
-    getAvailableUnit(instruction: Instructions.Instruction): ExecutionUnit {
+    getAvailableUnit(rsEntry: ReservationStationEntry): ExecutionUnit {
         /// <summary>
-        ///     Checks if a unit for the corresponding branch is available.
+        ///     Checks if a unit for the corresponding reservation station entry is available.
         ///     Returns a reference to the unit if availalbe
         ///     Returns null otherwise
         /// </summary>
+
+        var instruction = rsEntry.robEntry.instruction;
         var units = _cpu.ExecutionUnits;
 
         for (var j in units) {
@@ -151,24 +85,10 @@ class ReservationStation {
     }
 
     isFull() {
-        return this._instructions.length >= this._size;
+        return this._entries.length >= this._size;
     }
 
     isEmpty() {
-        return this._instructions.length == 0;
+        return this._entries.length == 0;
     }
-
-    private registersReady(instruction: Instructions.Instruction): boolean {
-        for (var key in instruction.operands) {
-            var elem = instruction.operands[key];
-            if (!$.isNumeric(elem)) {
-                if (!_cpu.RegisterFile[elem].set) {
-                    Display.writeLine("Register not set: " + elem, Enums.Style.Error);
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 }

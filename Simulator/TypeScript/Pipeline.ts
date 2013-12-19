@@ -14,12 +14,12 @@ class Pipeline {
 
         var instructions: Instructions.Instruction[] = [];
 
-        //var instructions : Instructions.Instruction[] = [null, null, null, null];
-
         while (true) {
             Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
             this.sendClockTick(_cpu.ExecutionUnits);
+
+            this.commit();
 
             //Writeback stage
             this.writeback();
@@ -48,14 +48,17 @@ class Pipeline {
         Display.writeLine("No. of pipeline cycles: " + pipelineCounter, Enums.Style.Instrumentation);
         Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
     }
-    
+
     private canPipelineStop(instructions: Instructions.Instruction[]): boolean {
 
         var instructionsPresent = instructions.some((elem)=> elem != null);
 
         var executionsPresent = _cpu.ExecutionUnits.some((elem)=> elem.state != Enums.State.Free);
 
-        return !(instructionsPresent || executionsPresent || !_cpu.ReservationStation.isEmpty());
+        return !(instructionsPresent
+            || executionsPresent
+            || !_cpu.ReservationStation.isEmpty()
+            || !_cpu.ReOrderBuffer.isEmpty());
     }
 
     private sendClockTick(executionUnits: ExecutionUnit[]) {
@@ -103,15 +106,13 @@ class Pipeline {
             units[i].execute();
         }
 
-        Display.printArray(units, "Units Executed");
+        Display.printArray(units, "Units Starting Execute");
     }
 
     private writeback(): void {
         var units: ExecutionUnit[] = [];
 
         _cpu.ExecutionUnits.forEach((unit)=> {
-            if (unit == null) return;
-
             if (unit.state == Enums.State.Completed)
                 units.push(unit);
         });
@@ -127,10 +128,37 @@ class Pipeline {
             if (result == null)
                 return;
 
-            _cpu.RegisterFile[destination].value = result;
-            _cpu.RegisterFile[destination].set = true;
+            destination.value = result;
+
+            //_cpu.RegisterFile[destination].value = result;
+            //_cpu.RegisterFile[destination].set = true;
 
             //Display.writeLine(this._cpu.RegisterFile[destination]);
+        }
+    }
+
+    private commit(): void {
+        var committed: ReOrderBufferEntry[] = [];
+
+        var buffer = _cpu.ReOrderBuffer.toArray();
+
+
+        for (var i in buffer) {
+            if ($.isNumeric(buffer[i].value)) {
+                //If the reorder buffer contains a numeric value, that means that instruction is compelte
+                //and has been written back, so commit the result to the registerFIle
+                committed.push(buffer[i]);
+
+                _cpu.RegisterFile[buffer[i].destination].value = buffer[i].value;
+            } else {
+                break;
+            }
+        }
+
+        Display.printArray(committed, "ROB Entries Commited");
+
+        for (var j in committed) {
+            buffer.splice($.inArray(committed[j], buffer), 1);
         }
     }
 
