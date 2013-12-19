@@ -58,7 +58,7 @@ module Display {
         ClearTable("#memoryTable");
     }
 
-    export function updateRegisterTable(registerFile: Register[]): void {
+    export function updateRegisterTable(registerFile: RegisterFile): void {
         /// <summary>
         ///     Updates the table with register value on the webpage with the latest values
         /// </summary>

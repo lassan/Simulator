@@ -4,6 +4,7 @@
 /// <reference path="DecodeUnit.ts" />
 /// <reference path="Display.ts" />
 /// <reference path="Assembler.ts" />
+///<reference path="RegisterFile.ts"/>
 /// <reference path="cpu.ts" />
 
 var _cpu;

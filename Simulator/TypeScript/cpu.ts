@@ -1,16 +1,7 @@
-class Register {
-
-    constructor(public value: number, public set: boolean) {}
-
-    public toString() {
-        return this.value + " -  " + this.set;
-    }
-
-}
 
 class CPU {
 
-    public RegisterFile: Register[];
+    public RegisterFile: RegisterFile;
     public Memory: number[];
     public ExecutionUnits: ExecutionUnit[];
     public DecodeUnits: DecodeUnit[];
@@ -20,23 +11,7 @@ class CPU {
     constructor() {}
 
     private initialiseRegisterFile(): void {
-        this.RegisterFile = [];
-        this.RegisterFile["r0"] = new Register(null, true);
-        this.RegisterFile["r1"] = new Register(null, true);
-        this.RegisterFile["r2"] = new Register(null, true);
-        this.RegisterFile["r3"] = new Register(null, true);
-        this.RegisterFile["r4"] = new Register(null, true);
-        this.RegisterFile["r5"] = new Register(null, true);
-        this.RegisterFile["r6"] = new Register(null, true);
-        this.RegisterFile["r7"] = new Register(null, true);
-        this.RegisterFile["r8"] = new Register(null, true);
-        this.RegisterFile["r9"] = new Register(null, true);
-        this.RegisterFile["r10"] = new Register(null, true);
-        this.RegisterFile["r11"] = new Register(null, true);
-        this.RegisterFile["r12"] = new Register(null, true);
-        this.RegisterFile["r13"] = new Register(null, true);
-        this.RegisterFile["pc"] = new Register(0, true);
-        this.RegisterFile["st"] = new Register(null, true);
+        this.RegisterFile = new RegisterFile();
     }
 
 

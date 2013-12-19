@@ -5,8 +5,8 @@
 
 #console div{
     font-size: 0.8em;
-    margin-bottom: 2em;
-    height: 28em;
+    margin-bottom: 0.5em;
+    height: 32.5em;
     width: 100%;
     overflow: auto;
 }

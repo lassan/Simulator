@@ -48,26 +48,7 @@ class Pipeline {
         Display.writeLine("No. of pipeline cycles: " + pipelineCounter, Enums.Style.Instrumentation);
         Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
     }
-
-    //private cycle(instructions: Instructions.Instruction[]): void {
-    //    /// <summary>
-    //    ///     This method models one pipeline cycle
-    //    /// </summary>
-    //    this.sendClockTick(_cpu.ExecutionUnits);
-
-    //    this.writeback();
-
-    //    this.execute();
-
-    //    _cpu.ReservationStation.dispatch();
-
-    //    this.decode(instructions);
-
-    //    if (!_cpu.ReservationStation.isFull()) {
-    //        instructions = this.fetch();
-    //    }
-    //}
-
+    
     private canPipelineStop(instructions: Instructions.Instruction[]): boolean {
 
         var instructionsPresent = instructions.some((elem)=> elem != null);
@@ -135,7 +116,7 @@ class Pipeline {
                 units.push(unit);
         });
 
-        Display.printArray(units, "Units writtenback");
+        Display.printArray(units, "Units Writtenback");
 
         for (var i in units) {
             var destination = units[i].destination;

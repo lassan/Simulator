@@ -148,13 +148,13 @@ class MemoryUnit extends ExecutionUnit {
     }
 
 class BranchUnit extends ExecutionUnit {
-    private _registerFile : Register[];
+    private _registerFile : RegisterFile;
 
     setUnitType(): void {
         this.type = Enums.ExecutionUnit.BranchUnit;
     }
 
-    setRegisterFile(registerFile: Register[]): void {
+    setRegisterFile(registerFile: RegisterFile): void {
         this._registerFile = registerFile;
     }
 
