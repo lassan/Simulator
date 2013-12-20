@@ -44,6 +44,7 @@ class ReservationStation {
                 unit.setInstruction(entry);
                 dispatched.push(entry);
             } else if (!_cpu.Config.isOutOfOrder()) {
+                //if it's not possible to dispatch the an instruction, and the configuration says not out of order, then stall
                 break;
             }
 
@@ -78,4 +79,5 @@ class ReservationStation {
     isEmpty() {
         return this._entries.length == 0;
     }
+
 }

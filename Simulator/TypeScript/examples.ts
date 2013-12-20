@@ -1,4 +1,20 @@
-﻿var _examples = {};
+﻿class ExampleEntry {
+    public assembly: string;
+    public assertions: number[];
+}
+
+class Examples {
+    private _array :ExampleEntry[];
+
+    constructor() {
+        this._array = [];
+    }
+}
+
+
+
+
+var _examples = {};
 
 _examples["MOV"] = {
     assembly:

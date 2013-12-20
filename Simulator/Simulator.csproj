@@ -43,19 +43,24 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="TypeScript\ArithmeticUnit.ts" />
+    <TypeScriptCompile Include="TypeScript\BranchUnit.ts" />
     <TypeScriptCompile Include="TypeScript\Configuration.ts" />
     <TypeScriptCompile Include="TypeScript\DecodeUnit.ts" />
     <TypeScriptCompile Include="TypeScript\Enums.ts" />
     <TypeScriptCompile Include="TypeScript\examples.ts" />
+    <TypeScriptCompile Include="TypeScript\FetchUnit.ts" />
     <TypeScriptCompile Include="TypeScript\helpers.ts" />
     <Content Include="Libraries\jquery-2.0.3.min.js" />
     <Content Include="index.html" />
     <Content Include="StyleSheets\console.css" />
     <Content Include="StyleSheets\fonts.css" />
     <Content Include="StyleSheets\style.css" />
+    <TypeScriptCompile Include="TypeScript\LoadUnit.ts" />
     <TypeScriptCompile Include="TypeScript\ReOrderBuffer.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStation.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStationEntry.ts" />
+    <TypeScriptCompile Include="TypeScript\StoreUnit.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -77,9 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
-    <TypeScriptCompile Include="TypeScript\ExecutionUnits.ts" />
+    <TypeScriptCompile Include="TypeScript\ExecutionUnit.ts" />
     <TypeScriptCompile Include="TypeScript\Assembler.ts" />
-    <TypeScriptCompile Include="TypeScript\cpu.ts" />
+    <TypeScriptCompile Include="TypeScript\CPU.ts" />
     <TypeScriptCompile Include="TypeScript\Pipeline.ts" />
     <TypeScriptCompile Include="TypeScript\Display.ts" />
     <TypeScriptCompile Include="TypeScript\Instructions.ts" />

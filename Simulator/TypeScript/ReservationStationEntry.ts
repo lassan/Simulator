@@ -17,7 +17,7 @@ class ReservationStationEntry {
             if (entry == null) {
                 //The entry doesn't exist in the ROB - i.e. not waiting to be written to
 
-                var regVal = _cpu.RegisterFile[operand].value;
+                var regVal = _cpu.RegisterFile[operand];
                 this.operands.push(regVal);
             } else {
                 //The entry does exist in the ROB - i.e. it is waiting to be computed

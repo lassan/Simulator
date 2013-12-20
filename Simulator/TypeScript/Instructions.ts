@@ -1,7 +1,8 @@
-///<reference path="Enums.ts"/>
+/// <reference path="Enums.ts" />
 
 module Instructions {
-    // The base class for all instructions
+
+// The base class for all instructions
     export class Instruction {
         public type: Enums.ExecutionUnit;
         public name: string;
@@ -18,6 +19,7 @@ module Instructions {
         public toString(): string {
             return "[" + this.name + "," + this.operands + "]";
         }
+
     }
 
     /***************************************/
@@ -27,43 +29,43 @@ module Instructions {
         name = "mov";
         numOperands = 2;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     export class ADD extends Instruction {
         name = "add";
         numOperands = 3;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     export class ADDI extends Instruction {
         name = "addi";
         numOperands = 3;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     export class SUB extends Instruction {
         name = "sub";
         numOperands = 3;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     export class SUBI extends Instruction {
         name = "subi";
         numOperands = 3;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     export class MUL extends Instruction {
         name = "mul";
         numOperands = 3;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     export class CMP extends Instruction {
         name = "cmp";
         numOperands = 2;
         type = Enums.ExecutionUnit.ArithmeticUnit;
-        }
+    }
 
     /***************************************/
     /******* MemoryUnit instructions *******/
@@ -73,13 +75,13 @@ module Instructions {
         name = "ldr";
         numOperands = 2;
         type = Enums.ExecutionUnit.LoadUnit;
-        }
+    }
 
     export class STR extends Instruction {
         name = "str";
         numOperands = 2;
         type = Enums.ExecutionUnit.StoreUnit;
-        }
+    }
 
     /***************************************/
     /***** BranchUnitUnit instructions *****/
@@ -89,29 +91,42 @@ module Instructions {
         name = "b";
         numOperands = 1;
         type = Enums.ExecutionUnit.BranchUnit;
-        }
+    }
 
     export class BEQ extends Instruction {
         name = "beq";
         numOperands = 1;
         type = Enums.ExecutionUnit.BranchUnit;
-        }
+    }
 
     export class BGT extends Instruction {
         name = "bgt";
         numOperands = 1;
         type = Enums.ExecutionUnit.BranchUnit;
-        }
+    }
 
     export class BLT extends Instruction {
         name = "blt";
         numOperands = 1;
         type = Enums.ExecutionUnit.BranchUnit;
-        }
+    }
 
     export class BNE extends Instruction {
         name = "blt";
         numOperands = 1;
         type = Enums.ExecutionUnit.BranchUnit;
-        }
+    }
+
+    export class BGE extends Instruction {
+        name = "bge";
+        numOperands = 1;
+        type = Enums.ExecutionUnit.BranchUnit;
+    }
+
+    export class BLE extends Instruction {
+        name = "ble";
+        numOperands = 1;
+        type = Enums.ExecutionUnit.BranchUnit;
+    }
+
 }

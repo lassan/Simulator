@@ -23,7 +23,7 @@ class Pipeline {
             this.commit();
             this.writeback();
             this.execute();
-            _cpu.ReservationStation.dispatch();
+            this.dispatch();
             this.decode(instructions);
 
             //Fetch stage
@@ -63,19 +63,8 @@ class Pipeline {
     }
 
     private fetch(): Instructions.Instruction[] {
-        var numInstructions = _cpu.Config.getNumFetch();
-        var instructions: Instructions.Instruction[] = [];
+        var instructions = _cpu.FetchUnit.fetch(this._instructions);
 
-        for (var i = 0; i < numInstructions; i++) {
-            if (_cpu.getProgramCounter() >= this._instructions.length) {
-                break;
-            } else {
-                {
-                    instructions.push(this._instructions[_cpu.getProgramCounter()]);
-                    _cpu.incrementProgramCounter();
-                }
-            }
-        }
         if (_cpu.Config.shouldOutputState())
             Display.printArray(instructions, "Instructions Fetched");
 

@@ -5,6 +5,7 @@ class CPU {
     public Memory: number[];
     public ExecutionUnits: ExecutionUnit[];
     public DecodeUnits: DecodeUnit[];
+    public FetchUnit: FetchUnit;
     public ReservationStation: ReservationStation;
     public Config: Configuration;
 
@@ -21,6 +22,7 @@ class CPU {
         this.initialiseMemory();
         this.initialiseReservationStation();
         this.initialiseDecodeUnits();
+        this.initialiseFetchUnit();
         this.initialiseExecutionUnits();
     }
 
@@ -73,6 +75,8 @@ class CPU {
             this.DecodeUnits.push(dUnit);
         }
     }
+
+    initialiseFetchUnit() { this.FetchUnit = new FetchUnit(); }
 
     initialiseExecutionUnits() {
         this.ExecutionUnits = [];
