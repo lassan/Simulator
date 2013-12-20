@@ -11,23 +11,35 @@ class ReOrderBufferEntry {
 }
 
 class ReOrderBuffer {
-    private array: ReOrderBufferEntry[];
+    private _array: ReOrderBufferEntry[];
 
     constructor() {
-        this.array = [];
+        this._array = [];
 
     }
 
     add(entry: ReOrderBufferEntry): void{
-        this.array.push(entry);
+        this._array.push(entry);
     }
 
-    removeFirstEntry() {
-        this.array.shift(); //removes first element of array
+    removeFirst() {
+        this._array.shift(); //removes first element of _array
+    }
+    
+    removeLast() {
+        this._array.pop();
+    }
+
+    flush(entry: ReOrderBufferEntry) {
+        //Removes all the entries in the re-order buffer after the specified instruction
+        var index = $.inArray(entry, this._array);
+        while (this._array.length != index) {
+            this.removeLast();
+        }
     }
 
     toArray() {
-        return this.array;
+        return this._array;
     }
 
     tryGetExistingEntry(register: string): ReOrderBufferEntry {
@@ -37,15 +49,15 @@ class ReOrderBuffer {
         /// </summary>
         var entry: ReOrderBufferEntry = null;
 
-        for (var key in this.array) {
-            if (this.array[key].destination == register)
-                entry =  this.array[key];
+        for (var key in this._array) {
+            if (this._array[key].destination == register)
+                entry =  this._array[key];
         }
         return entry;
     }
 
     isEmpty() {
-        return this.array.length == 0;
+        return this._array.length == 0;
     }
 
 }
