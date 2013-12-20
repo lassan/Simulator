@@ -91,10 +91,7 @@ class CPU {
             var sUnit = new StoreUnit();
             this.ExecutionUnits.push(sUnit);
         }
-        for (var k = 0; k < this.Config.getNumBranch(); k++) {
-            var bUnit = new BranchUnit();
-            this.ExecutionUnits.push(bUnit);
-        }
+        this.ExecutionUnits.push(new BranchUnit());
     }
 
     initialiseReservationStation() {

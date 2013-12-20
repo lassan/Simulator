@@ -28,21 +28,18 @@ class ExecutionUnit {
     }
 
     clockTick(): void {
-        if (this.delay > 0)
-            this.delay--;
-        if (this.delay == 0)
-            this.state = Enums.State.Completed;
+        if (this.state == Enums.State.Executing) {
+            if (this.delay > 0)
+                this.delay--;
+            if (this.delay == 0)
+                this.state = Enums.State.Completed;
+        }
     }
 
     setUnitType(): void { throw "setUnitType function not overridden"; }
 
     resetExecutionUnit() {
         this.state = Enums.State.Free;
-        this.delay = null;
-        this.result = null;
-        this.operands = null;
-        this.operation = null;
-        this.destination = null;
     }
 
 

@@ -68,6 +68,8 @@ class Pipeline {
         if (_cpu.Config.shouldOutputState())
             Display.printArray(instructions, "Instructions Fetched");
 
+        window.console.log(instructions);
+
         return instructions;
     }
 
@@ -116,26 +118,29 @@ class Pipeline {
             Display.printArray(units, "Units Writtenback");
 
         for (var i in units) {
+
             var destination = units[i].destination;
 
             var result = units[i].getResult();
-            /// in the case of store instruction, there is no result
-            /// but we still want to call getResult to reset its state
             if (result == null)
-                return;
+                throw Error("Result should never be null.");
 
-            destination.value = result;
+            var writebackRequired = true;
+            if (units[i].type == Enums.ExecutionUnit.BranchUnit) {
+                if (result == -1) {
+                    // branch not taken
+                    writebackRequired = false;
+                    _cpu.FetchUnit.branchNotTaken();
+                    _cpu.ReOrderBuffer.flush(destination);
+                } else {
+                    writebackRequired = true;
+                    _cpu.FetchUnit.branchTaken();
 
-            //_cpu.RegisterFile[destination].value = result;
-            //_cpu.RegisterFile[destination].set = true;
-
-            //Display.writeLine(this._cpu.RegisterFile[destination]);
+                }
+            }
+            if (writebackRequired)
+                destination.value = result;
         }
-
-        //If there are any instructions of the ADD r1 r1 r0 variety where dst and src are the same, 
-        //set the value in the re-order buffer to null;
-
-
     }
 
     private commit(): void {
@@ -146,12 +151,14 @@ class Pipeline {
 
         for (var i in buffer) {
             if ($.isNumeric(buffer[i].value)) {
-                //If the reorder buffer contains a numeric value, that means that instruction is compelte
-                //and has been written back, so commit the result to the registerFIle
-                committed.push(buffer[i]);
-
-
-                _cpu.RegisterFile[buffer[i].destination] = buffer[i].value;
+                //If the reorder buffer contains a numeric value, that means that instruction is compelte and has been written back, so commit the result to the registerFIle
+                if (buffer[i].destination == "pc") {
+                    //prevent any branch instructions from overwriting the pc as this is handled by the fetch unit and branch prediction, etc
+                    committed.push(buffer[i]);  //include it in the commited list anyway so that it gets removed from the ReOrderBuffer by the end of this cycle
+                } else {
+                    committed.push(buffer[i]);
+                    _cpu.RegisterFile[buffer[i].destination] = buffer[i].value;
+                }
             } else {
                 break;
             }
@@ -160,9 +167,13 @@ class Pipeline {
         if (_cpu.Config.shouldOutputState())
             Display.printArray(committed, "ROB Entries Commited");
 
-        for (var j in committed) {
-            buffer.splice($.inArray(committed[j], buffer), 1);
+        for (var j = 0; j < committed.length; j++) {
+            _cpu.ReOrderBuffer.removeFirst();
         }
+
+        //for (var j in committed) {
+        //    buffer.splice($.inArray(committed[j], buffer), 1);
+        //}
     }
 
 }

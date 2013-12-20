@@ -1,6 +1,9 @@
 class FetchUnit {
+    public LinkStack: number[];
 
-    contructor() {}
+    constructor() {
+        this.LinkStack = [];
+    }
 
     fetch(allInstructions: Instructions.Instruction[]): Instructions.Instruction[] {
         var numInstructions = _cpu.Config.getNumFetch();
@@ -8,18 +11,19 @@ class FetchUnit {
 
         for (var i = 0; i < numInstructions; i++) {
             if (_cpu.getProgramCounter() >= allInstructions.length) {
+                //If no instructions are left, stop
                 break;
             } else {
-                {
-                    var instruction = allInstructions[_cpu.getProgramCounter()];
 
-                    instructions.push(instruction);
+                var instruction = allInstructions[_cpu.getProgramCounter()];
+                instructions.push(instruction);
 
-                    if(instruction.type != Enums.ExecutionUnit.BranchUnit)
-                        _cpu.incrementProgramCounter();
-                    else {
-                        _cpu.setProgramCounter(this.predictBranch(instruction));
-                    }
+                if (instruction.type != Enums.ExecutionUnit.BranchUnit)
+                    _cpu.incrementProgramCounter();
+                else {
+
+                    this.LinkStack.push(_cpu.getProgramCounter());
+                    _cpu.setProgramCounter(this.predictBranch(instruction));
                 }
             }
         }
@@ -39,8 +43,22 @@ class FetchUnit {
         if (instruction instanceof Instructions.B) {
             //Branch will definitely be taken
             nextPc = +instruction.operands[0];
+        } else {
+            nextPc = +instruction.operands[0];
         }
 
         return nextPc;
     }
+
+    branchNotTaken() {
+        /// <summary>
+        ///     if a branch was not taken, the execution must continue from the line after where the branch was
+        /// </summary>
+        _cpu.setProgramCounter(this.LinkStack.pop() + 1);
+    }
+
+    branchTaken() {
+        this.LinkStack.shift();
+    }
+
 }

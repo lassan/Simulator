@@ -11,9 +11,6 @@ class Examples {
     }
 }
 
-
-
-
 var _examples = {};
 
 _examples["MOV"] = {
@@ -110,13 +107,13 @@ _examples["B"] = {
 
 _examples["BEQ"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 42 r1\n" +
+        "MOV r0 42\n" +
+            "MOV r1 42\n" +
             "CMP r0 r1\n" +
             "BEQ label\n" +
-            "MOV -1 r5\n" +
+            "MOV r5 -1\n" +
             "label:\n" +
-            "MOV 42 r4\n",
+            "MOV r4 42\n",
     assertions: {
         "r4": 42,
         "r5": ""
