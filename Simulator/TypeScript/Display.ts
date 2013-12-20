@@ -58,7 +58,7 @@ module Display {
         ClearTable("#memoryTable");
     }
 
-    export function updateRegisterTable(registerFile: RegisterFile): void {
+    export function updateRegisterTable(registerFile: number[]): void {
         /// <summary>
         ///     Updates the table with register value on the webpage with the latest values
         /// </summary>
@@ -67,7 +67,7 @@ module Display {
             var td0 = $(tr).find('td')[0];
             var td1 = $(tr).find('td')[1];
 
-            var val = registerFile[td0.innerText].value;
+            var val = registerFile[td0.innerText];
             if (val != null)
                 $(td1).text(val);
         });

@@ -1,6 +1,6 @@
 class CPU {
 
-    public RegisterFile: RegisterFile;
+    public RegisterFile: number[];
     public ReOrderBuffer: ReOrderBuffer;
     public Memory: number[];
     public ExecutionUnits: ExecutionUnit[];
@@ -19,7 +19,7 @@ class CPU {
         this.initialiseRegisterFile();
         this.initialiseReOrderBuffer();
         this.initialiseMemory();
-        this.initialiseReservationStations();
+        this.initialiseReservationStation();
         this.initialiseDecodeUnits();
         this.initialiseExecutionUnits();
     }
@@ -31,15 +31,15 @@ class CPU {
     }
 
     public incrementProgramCounter(): void {
-        this.RegisterFile["pc"].value++;
+        this.RegisterFile["pc"]++;
     }
 
     public getProgramCounter(): number {
-        return this.RegisterFile["pc"].value;
+        return this.RegisterFile["pc"];
     }
 
     public setProgramCounter(pc: number): void {
-        this.RegisterFile["pc"].value = pc;
+        this.RegisterFile["pc"] = pc;
     }
 
     initialiseReOrderBuffer(): void {
@@ -47,7 +47,23 @@ class CPU {
     }
 
     initialiseRegisterFile(): void {
-        this.RegisterFile = new RegisterFile();
+        this.RegisterFile = [];
+        this.RegisterFile["r0"] = null;
+        this.RegisterFile["r1"] = null;
+        this.RegisterFile["r2"] = null;
+        this.RegisterFile["r3"] = null;
+        this.RegisterFile["r4"] = null;
+        this.RegisterFile["r5"] = null;
+        this.RegisterFile["r6"] = null;
+        this.RegisterFile["r7"] = null;
+        this.RegisterFile["r8"] = null;
+        this.RegisterFile["r9"] = null;
+        this.RegisterFile["r10"] = null;
+        this.RegisterFile["r11"] = null;
+        this.RegisterFile["r11"] = null;
+        this.RegisterFile["r13"] = null;
+        this.RegisterFile["pc"] = 0;
+        this.RegisterFile["st"] = null;
     }
 
     initialiseDecodeUnits() {
@@ -73,12 +89,11 @@ class CPU {
         }
         for (var k = 0; k < this.Config.getNumBranch(); k++) {
             var bUnit = new BranchUnit();
-            bUnit.setRegisterFile(this.RegisterFile);
             this.ExecutionUnits.push(bUnit);
         }
     }
 
-    initialiseReservationStations() {
+    initialiseReservationStation() {
         this.ReservationStation = new ReservationStation(this.Config.getSizeRS());
     }
 

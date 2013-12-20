@@ -1,30 +1,16 @@
-class Register {
-    constructor(public value: number, public set: boolean) { }
-
-    public toString() {
-        return this.value + " -  " + this.set;
+var Register = (function () {
+    function Register(value, set) {
+        this.value = value;
+        this.set = set;
     }
-}
+    Register.prototype.toString = function () {
+        return this.value + " -  " + this.set;
+    };
+    return Register;
+})();
 
-class RegisterFile {
-    public r0: Register;
-    public r1: Register;
-    public r2: Register;
-    public r3: Register;
-    public r4: Register;
-    public r5: Register;
-    public r6: Register;
-    public r7: Register;
-    public r8: Register;
-    public r9: Register;
-    public r10: Register;
-    public r11: Register;
-    public r12: Register;
-    public r13: Register;
-    public pc: Register;
-    public st: Register;
-
-    constructor() {
+var RegisterFile = (function () {
+    function RegisterFile() {
         this.r0 = new Register(null, true);
         this.r1 = new Register(null, true);
         this.r2 = new Register(null, true);
@@ -42,4 +28,6 @@ class RegisterFile {
         this.pc = new Register(0, true);
         this.st = new Register(null, true);
     }
-}
+    return RegisterFile;
+})();
+//# sourceMappingURL=RegisterFile.js.map

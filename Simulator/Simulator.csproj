@@ -43,22 +43,16 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Scripts\assembler.js" />
-    <Content Include="Scripts\control.js" />
-    <Content Include="Scripts\cpu.js" />
     <TypeScriptCompile Include="TypeScript\Configuration.ts" />
     <TypeScriptCompile Include="TypeScript\DecodeUnit.ts" />
     <TypeScriptCompile Include="TypeScript\Enums.ts" />
     <TypeScriptCompile Include="TypeScript\examples.ts" />
     <TypeScriptCompile Include="TypeScript\helpers.ts" />
-    <Content Include="Scripts\instructions.js" />
     <Content Include="Libraries\jquery-2.0.3.min.js" />
     <Content Include="index.html" />
     <Content Include="StyleSheets\console.css" />
     <Content Include="StyleSheets\fonts.css" />
     <Content Include="StyleSheets\style.css" />
-    <Content Include="Scripts\watch.js" />
-    <TypeScriptCompile Include="TypeScript\RegisterFile.ts" />
     <TypeScriptCompile Include="TypeScript\ReOrderBuffer.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStation.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStationEntry.ts" />

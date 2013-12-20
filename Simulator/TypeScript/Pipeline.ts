@@ -162,7 +162,7 @@ class Pipeline {
                 committed.push(buffer[i]);
 
 
-                _cpu.RegisterFile[buffer[i].destination].value = buffer[i].value;
+                _cpu.RegisterFile[buffer[i].destination] = buffer[i].value;
             } else {
                 break;
             }

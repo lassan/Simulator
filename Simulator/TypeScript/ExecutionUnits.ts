@@ -120,14 +120,8 @@ class ArithmeticUnit extends ExecutionUnit {
 }
 
 class BranchUnit extends ExecutionUnit {
-    private _registerFile: RegisterFile;
-
     setUnitType(): void {
         this.type = Enums.ExecutionUnit.BranchUnit;
-    }
-
-    setRegisterFile(registerFile: RegisterFile): void {
-        this._registerFile = registerFile;
     }
 
     b(): void {
