@@ -1,4 +1,4 @@
-///<reference path="DecodeUnit.ts"/>
+/// <reference path="DecodeUnit.ts" />
 
 class ReservationStation {
     private _entries: ReservationStationEntry[];
@@ -16,10 +16,13 @@ class ReservationStation {
         this._entries.push(rsEntry);
     }
 
-    dispatch() : void{
+    dispatch(): ReservationStationEntry[] {
         var dispatched: ReservationStationEntry[] = [];
-        
-        this._entries.forEach((entry, index)=> {
+
+        for (var j in this._entries) {
+            var entry = this._entries[j];
+            var unit: ExecutionUnit = null;
+
             var dispatchable: boolean = true;
             for (var i in entry.operands) {
 
@@ -30,34 +33,26 @@ class ReservationStation {
                     if ($.isNumeric(robEntry.value))
                         entry.operands[i] = robEntry.value;
                 }
-                
+
                 if (!$.isNumeric(entry.operands[i])) {
                     dispatchable = false;
-                    break;
+                    break; //stop checking the rest of the operands
                 }
             }
 
-            if (dispatchable) {
-                var unit = this.getAvailableUnit(entry);
-                if (unit == null)
-                    return;
-                else {
-                    unit.setInstruction(entry);
-                    dispatched.push(entry);
-                }
+            if (dispatchable && (unit = this.getAvailableUnit(entry)) != null) {
+                unit.setInstruction(entry);
+                dispatched.push(entry);
+            } else if (!_cpu.Config.isOutOfOrder()) {
+                break;
             }
-        });
 
-
-        Display.printArray(dispatched, "RS Entries Dispatched");
-
-        for (var i in dispatched) {
-            this._entries.splice($.inArray(dispatched[i], this._entries), 1);
         }
-    }
 
-    updateOperands() {
-        
+        for (var j in dispatched) {
+            this._entries.splice($.inArray(dispatched[j], this._entries), 1);
+        }
+        return dispatched;
     }
 
     getAvailableUnit(rsEntry: ReservationStationEntry): ExecutionUnit {
@@ -66,7 +61,6 @@ class ReservationStation {
         ///     Returns a reference to the unit if availalbe
         ///     Returns null otherwise
         /// </summary>
-
         var instruction = rsEntry.robEntry.instruction;
         var units = _cpu.ExecutionUnits;
 

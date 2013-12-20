@@ -15,21 +15,15 @@ class Pipeline {
         var instructions: Instructions.Instruction[] = [];
 
         while (true) {
-            Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
+            if (_cpu.Config.shouldOutputState())
+                Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
             this.sendClockTick(_cpu.ExecutionUnits);
 
             this.commit();
-
-            //Writeback stage
             this.writeback();
-
-            //Execute stage
             this.execute();
-
             _cpu.ReservationStation.dispatch();
-
-            //Decode and issue stage
             this.decode(instructions);
 
             //Fetch stage
@@ -37,13 +31,14 @@ class Pipeline {
                 instructions = this.fetch();
             }
 
-            Display.writeLine('');
+            if (_cpu.Config.shouldOutputState())
+                Display.writeLine('');
 
             if (this.canPipelineStop(instructions)) break;
 
             pipelineCounter++;
         }
-
+        Display.writeLine("Stats", Enums.Style.Heading);
         Display.writeLine("Execution terminated.");
         Display.writeLine("No. of pipeline cycles: " + pipelineCounter, Enums.Style.Instrumentation);
         Display.writeLine("Instructions fetched:  " + instructionCounter, Enums.Style.Instrumentation);
@@ -81,7 +76,9 @@ class Pipeline {
                 }
             }
         }
-        Display.printArray(instructions, "Instructions Fetched");
+        if (_cpu.Config.shouldOutputState())
+            Display.printArray(instructions, "Instructions Fetched");
+
         return instructions;
     }
 
@@ -90,7 +87,15 @@ class Pipeline {
             if (elem != null)
                 _cpu.DecodeUnits[index].decode(elem);
         });
-        Display.printArray(instructions, "Instructions Decoded");
+        if (_cpu.Config.shouldOutputState())
+            Display.printArray(instructions, "Instructions Decoded");
+    }
+
+    private dispatch() {
+        var dispatched = _cpu.ReservationStation.dispatch();
+
+        if (_cpu.Config.shouldOutputState())
+            Display.printArray(dispatched, "RS Entries Dispatched");
     }
 
     private execute(): void {
@@ -106,7 +111,8 @@ class Pipeline {
             units[i].execute();
         }
 
-        Display.printArray(units, "Units Starting Execute");
+        if (_cpu.Config.shouldOutputState())
+            Display.printArray(units, "Units Starting Execute");
     }
 
     private writeback(): void {
@@ -117,7 +123,8 @@ class Pipeline {
                 units.push(unit);
         });
 
-        Display.printArray(units, "Units Writtenback");
+        if (_cpu.Config.shouldOutputState())
+            Display.printArray(units, "Units Writtenback");
 
         for (var i in units) {
             var destination = units[i].destination;
@@ -155,13 +162,14 @@ class Pipeline {
                 committed.push(buffer[i]);
 
 
-                    _cpu.RegisterFile[buffer[i].destination].value = buffer[i].value;
+                _cpu.RegisterFile[buffer[i].destination].value = buffer[i].value;
             } else {
                 break;
             }
         }
 
-        Display.printArray(committed, "ROB Entries Commited");
+        if (_cpu.Config.shouldOutputState())
+            Display.printArray(committed, "ROB Entries Commited");
 
         for (var j in committed) {
             buffer.splice($.inArray(committed[j], buffer), 1);

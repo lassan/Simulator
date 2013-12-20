@@ -53,6 +53,7 @@ class Assembler {
 
         for (var i = 0; i < lines.length; i++) {
             if (!StringHelpers.isBlank(lines[i]) && !StringHelpers.isEmpty(lines[i])) {
+                lines[i] = $.trim(lines[i]);    //remove whitespace
                 var parts = this.getInstructionParts(lines[i]);
                 if (!this.tryCreateLabel(parts, programCounter)) {
                     programCounter++;

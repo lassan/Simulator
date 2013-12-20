@@ -1,5 +1,4 @@
-class Configuration
-{
+class Configuration {
     private _config: any[];
 
     constructor() {
@@ -10,13 +9,17 @@ class Configuration
         this._config["branch"] = $("input[name=numBranch]").val();
         this._config["decode"] = $("input[name=numDecode]").val();
         this._config["sizeRS"] = $("input[name=sizeRS]").val();
+        this._config["outOfOrder"] = $("input[name=outOfOrder").is(":checked");
+        this._config["outputState"] = $("input[name=outputState]").is(":checked");
     }
 
-    public valid() : boolean {
+    public valid(): boolean {
         for (var key in this._config) {
-            if (this._config[key] == null || this._config[key] < 1) {
+            if ((this._config[key] == null && this._config[key] <= 0) && this._config[key] != true && this._config[key] != false) {
                 alert(key + " invalid.");
                 return false;
+            } else {
+
             }
         }
         return true;
@@ -45,4 +48,13 @@ class Configuration
     public getSizeRS() {
         return this._config["sizeRS"];
     }
+
+    public isOutOfOrder() {
+        return this._config["outOfOrder"];
+    }
+
+    public shouldOutputState() {
+        return this._config["outputState"];
+    }
+
 }
