@@ -61,6 +61,7 @@
     <TypeScriptCompile Include="TypeScript\RegisterFile.ts" />
     <TypeScriptCompile Include="TypeScript\ReOrderBuffer.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStation.ts" />
+    <TypeScriptCompile Include="TypeScript\ReservationStationEntry.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

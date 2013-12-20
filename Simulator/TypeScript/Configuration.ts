@@ -5,7 +5,8 @@ class Configuration {
         this._config = [];
 
         this._config["alu"] = $("input[name=numAlu]").val();
-        this._config["loadstore"] = $("input[name=numLoaddStore]").val();
+        this._config["load"] = $("input[name=numLoad]").val();
+        this._config["store"] = $("input[name=numStore]").val();
         this._config["branch"] = $("input[name=numBranch]").val();
         this._config["decode"] = $("input[name=numDecode]").val();
         this._config["sizeRS"] = $("input[name=sizeRS]").val();
@@ -29,8 +30,12 @@ class Configuration {
         return this._config["alu"];
     }
 
-    public getNumLoadStore() {
-        return this._config["loadstore"];
+    public getNumStore() {
+        return this._config["store"];
+    }
+
+    public getNumLoad() {
+        return this._config["load"];
     }
 
     public getNumBranch() {
