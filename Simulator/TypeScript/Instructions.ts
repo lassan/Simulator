@@ -7,16 +7,17 @@ module Instructions {
         public type: Enums.ExecutionUnit;
         public name: string;
         public operands: string[];
+        public willBranch: boolean; //only used by Branch instructions
         public numOperands: number; // number of operands the instruction executes on
 
         constructor() {
         }
 
-        public setOperands(operands: string[]) {
+        setOperands(operands: string[]) {
             this.operands = operands;
         }
 
-        public toString(): string {
+        toString(): string {
             return "[" + this.name + "," + this.operands + "]";
         }
 
@@ -112,7 +113,7 @@ module Instructions {
     }
 
     export class BNE extends Instruction {
-        name = "blt";
+        name = "bne";
         numOperands = 1;
         type = Enums.ExecutionUnit.BranchUnit;
     }

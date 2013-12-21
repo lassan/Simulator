@@ -11,7 +11,7 @@ class StoreUnit extends ExecutionUnit {
         /// <summary>
         ///     STR address data - data to store in src, memory address to store to in dst
         /// </summary>
-        this.delay = 4;
+        this.delay = 16;
         this.data = this.operands[1];
 
         if (this.data == null)

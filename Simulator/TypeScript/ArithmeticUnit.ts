@@ -30,7 +30,7 @@ class ArithmeticUnit extends ExecutionUnit {
     }
 
     mul(): void {
-        this.delay = 4;
+        this.delay = 8;
         this.result = +this.operands[0] * +this.operands[1];
     }
 
@@ -38,14 +38,14 @@ class ArithmeticUnit extends ExecutionUnit {
         /// <summary>
         ///     Sets the result to 1 if op1 is less than op2, 2 if op1 is greater than op2, or 0 if op1 is equal to op2
         /// </summary>
-        this.delay = 2;
-        var comparison = +this.operands[0] - +this.operands[1];
+        this.delay = 4;
+        var comparison= +this.operands[0] - +this.operands[1];
         if (comparison == 0)
             this.result = 0;
         else if (comparison > 0)
-            this.result = 2;
-        else if (comparison < 0)
             this.result = 1;
+        else if (comparison < 0)
+            this.result = -1;
     }
 
 }

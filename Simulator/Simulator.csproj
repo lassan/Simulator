@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="TypeScript\ArithmeticUnit.ts" />
+    <TypeScriptCompile Include="TypeScript\BranchPredictors.ts" />
     <TypeScriptCompile Include="TypeScript\BranchUnit.ts" />
     <TypeScriptCompile Include="TypeScript\Configuration.ts" />
     <TypeScriptCompile Include="TypeScript\DecodeUnit.ts" />
@@ -56,6 +57,7 @@
     <Content Include="StyleSheets\console.css" />
     <Content Include="StyleSheets\fonts.css" />
     <Content Include="StyleSheets\style.css" />
+    <TypeScriptCompile Include="TypeScript\Instrumentation.ts" />
     <TypeScriptCompile Include="TypeScript\LoadUnit.ts" />
     <TypeScriptCompile Include="TypeScript\ReOrderBuffer.ts" />
     <TypeScriptCompile Include="TypeScript\ReservationStation.ts" />

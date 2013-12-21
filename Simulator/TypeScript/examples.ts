@@ -122,13 +122,13 @@ _examples["BEQ"] = {
 
 _examples["BNE"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 5 r1\n" +
+        "MOV r0 42\n" +
+            "MOV r1 5\n" +
             "CMP r0 r1\n" +
             "BNE label\n" +
-            "MOV -1 r5\n" +
+            "MOV r5 -1\n" +
             "label:\n" +
-            "MOV 42 r4\n",
+            "MOV r4 42\n",
     assertions: {
         "r4": 42,
         "r5": ""
@@ -137,13 +137,13 @@ _examples["BNE"] = {
 
 _examples["BGT"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 0 r1\n" +
-            "CMP r0 r1\n" +
+        "MOV r0 42\n" +
+            "MOV r1 0\n" +
+            "CMP r1 r0\n" +
             "BGT label\n" +
-            "MOV -1 r5\n" +
+            "MOV r5 -1\n" +
             "label:\n" +
-            "MOV 42 r4\n",
+            "MOV r4 42\n",
     assertions: {
         "r4": 42,
         "r5": ""
@@ -152,25 +152,16 @@ _examples["BGT"] = {
 
 _examples["BLT"] = {
     assembly:
-        "MOV 42 r0\n" +
-            "MOV 0 r1\n" +
+        "MOV r0 42\n" +
+            "MOV r1 0\n" +
             "CMP r1 r0\n" +
             "BLT label\n" +
-            "MOV -1 r5\n" +
+            "MOV r5 -1\n" +
             "label:\n" +
-            "MOV 42 r4\n",
+            "MOV r4 42\n",
     assertions: {
         "r4": 42,
         "r5": ""
-    }
-};
-
-_examples["CPY"] = {
-    assembly:
-        "MOV 42 r0\n" +
-            "CPY r0 r1\n",
-    assertions: {
-        "r1": 42
     }
 };
 
@@ -194,17 +185,17 @@ _examples["LDR"] = {
 
 _examples["Simple while loop"] = {
     assembly:
-        "MOV 5 r0\n" +
-            "MOV 10 r1\n" +
+        "MOV r0 5\n" +
+            "MOV r1 10\n" +
             "\n" +
             "loop_begin:\n" +
-            "CMP r1 r0\n" +
+            "CMP r0 r1\n" +
             "BEQ loop_end\n" +
-            "ADDI 1 r0 r0\n" +
+            "ADDI r0 r0 1\n" +
             "B loop_begin\n" +
             "\n" +
             "loop_end:\n" +
-            "MOV -1 r3",
+            "MOV r3 -1",
     assertions: {
         "r3": -1
     }
@@ -247,11 +238,11 @@ _examples["For loop with arrays"] = {
 
 _examples["Euclidean Algorithm"] = {
     assembly:
-        "MOV 81 r0\n" +
-            "MOV 45 r1\n" +
+        "MOV r0 81\n" +
+            "MOV r1 45\n" +
             "\n" +
             "loop_begin:\n" +
-            "CMP r0 r1\n" +
+            "CMP r1 r0\n" +
             "BEQ loop_end\n" +
             "BGT greater_than\n" +
             "SUB r0 r1 r1\n" +
@@ -262,7 +253,7 @@ _examples["Euclidean Algorithm"] = {
             "B loop_begin\n" +
             "\n" +
             "loop_end:\n" +
-            "CPY r1 r3\n",
+            "ADDI r3 r1 0\n",
     assertions: {
         "r0": 5,
         "r3": 5

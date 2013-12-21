@@ -40,17 +40,22 @@ module Display {
 
     export function printArray(array: any, heading: string): void {
         Display.writeLine(heading, Enums.Style.Heading);
+        window.console.group(heading);
 
         var i = 0;
         for (var key in array) {
             Display.write(i +
                 ":&nbsp;&nbsp;&nbsp;&nbsp;", Enums.Style.Instrumentation);
 
-            if (array[key] != null)
+            if (array[key] != null) {
                 Display.writeLine(array[key].toString());
+                window.console.log(array[key].toString());
+            }
+
 
             i++;
         }
+        window.console.groupEnd();
     }
 
     export function clearTables() {
@@ -83,6 +88,27 @@ module Display {
             if (val != null)
                 $(td1).text(val);
         });
+    }
+
+
+    export function updateStats() {
+        var $div = $("#stats div");
+        $div.text('');
+        var space = ":&nbsp;&nbsp;&nbsp;";
+
+        var array= _cpu.Stats.toArray();
+        for (var key in array) {
+            $div.append(key + space + array[key] + "<br/>");
+        }
+
+        $div.append("<hr/>");
+
+        var successRate = (array["Correct Predictions"] / (array["Incorrect Predictions"] + array["Correct Predictions"])) * 100;
+        $div.append("Prediction success rate" + space + + Math.round(successRate * 100) / 100 + " %<br/>");
+
+        var perIteration = Math.round((array["Instructions Commited"] / array["Pipeline Iterations"]) * 100) / 100;
+
+        $div.append("Instructions per iteration" + space + perIteration + "<br/>");
     }
 
     /* Private functions */

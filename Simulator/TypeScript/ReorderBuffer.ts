@@ -8,6 +8,7 @@ class ReOrderBufferEntry {
     public toString() {
         return "[" + this.instruction.name + ", " + this.destination + ", " + this.value + "]";
     }
+
 }
 
 class ReOrderBuffer {
@@ -18,24 +19,40 @@ class ReOrderBuffer {
 
     }
 
-    add(entry: ReOrderBufferEntry): void{
+    add(entry: ReOrderBufferEntry): void {
         this._array.push(entry);
     }
 
     removeFirst() {
         this._array.shift(); //removes first element of _array
     }
-    
+
     removeLast() {
         this._array.pop();
     }
 
     flush(entry: ReOrderBufferEntry) {
         //Removes all the entries in the re-order buffer after the specified instruction
-        var index = $.inArray(entry, this._array);
-        while (this._array.length != index) {
+        window.console.log("flushing: " + entry.toString());
+        var index = this._array.indexOf(entry);
+        if (index == -1) throw Error("Entry to start flushing from not in the reorder buffer.");
+
+        index = index + 1;
+        if (index >= this._array.length)
+            return;
+
+        while (this._array.length != index ) {
             this.removeLast();
         }
+    }
+
+    getEntriesAfter(entry: ReOrderBufferEntry) {
+        var array: ReOrderBufferEntry[] = [];
+        var index = this._array.indexOf(entry);
+        for (index = index + 1; index < this._array.length; index++) {
+            array.push(this._array[index]);
+        }
+        return array;
     }
 
     toArray() {
@@ -51,7 +68,7 @@ class ReOrderBuffer {
 
         for (var key in this._array) {
             if (this._array[key].destination == register)
-                entry =  this._array[key];
+                entry = this._array[key];
         }
         return entry;
     }

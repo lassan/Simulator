@@ -12,12 +12,15 @@
         <script type="text/javascript" src="TypeScript/Configuration.js"></script>
         <script type="text/javascript" src="TypeScript/helpers.js"> </script>
         <script type="text/javascript" src="TypeScript/examples.js"> </script>
+        
+        <script type="text/javascript" src="TypeScript/Instrumentation.js"></script>
+        
         <script type="text/javascript" src="TypeScript/Instructions.js"> </script>
         <script type="text/javascript" src="TypeScript/Assembler.js"> </script>
         <script type="text/javascript" src="TypeScript/ReservationStationEntry.js"></script>
         <script type="text/javascript" src="TypeScript/ReservationStation.js"></script>
         
-
+        <script type="text/javascript" src="TypeScript/BranchPredictors.js"></script>
         <script type="text/javascript" src="TypeScript/FetchUnit.js"> </script>
         <script type="text/javascript" src="TypeScript/DecodeUnit.js"> </script>
         
@@ -209,11 +212,12 @@
                         Size of Reservation Station <input name="sizeRS" value="32"/>
                         <hr/>
                         Out of Order <input name="outOfOrder" type="checkbox" checked="checked"/><br/>
-                        Output Pipeline State <input name="outputState" type="checkbox" checked="checked"/>
-                        Branch Prediction <select>
-                                              <option>AlwaysTaken</option>
+                        Output Pipeline State <input name="outputState" type="checkbox" checked="checked"/><br/>
+                        Branch Prediction <select id="branchPrediction">
                                               <option>Displacement</option>
+                                              <option>AlwaysTaken</option>
                                               <option>Dynamic</option>
+                                              <option>NeverTaken</option>
                                           </select>
                     </div>
                 </div>
@@ -241,8 +245,6 @@
                                 <option>BLT</option>
                             </optgroup>
                             <optgroup label="Memory Instructions">
-                                <option>MOV</option>
-                                <option>CPY</option>
                                 <option>LDR</option>
                                 <option>STR</option>
                             </optgroup>
@@ -260,7 +262,9 @@
                     <h3>Known Issues</h3>
                     <div>
                         <ul>
-                            <li>If the reservation stataion gets full, the processor will crash.</li>
+                            <li>No input validation is performed. If you enter an instruction incorrectly, the processor will probably go in an infinite loop.</li>
+                            <li>Dynamic branch prediction is broken for out of order execution when multiple Decode units are used.</li>
+                            <li>Never taken branch prediction is broken.</li>
                         </ul>
                     </div>
                 </div>
@@ -275,7 +279,10 @@
                 <div> </div>
                 <button id="clearConsoleButton">Clear Console</button>
             </div>
-
+            <div class="section rightMostSection" id="stats">
+                <h3>Stats</h3>
+                <div></div>
+            </div>
         </div>
     </body>
 </html>

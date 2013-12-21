@@ -1,28 +1,26 @@
 /// <reference path="Enums.ts" />
-///<reference path="Configuration.ts"/>
+/// <reference path="Configuration.ts" />
 /// <reference path="DecodeUnit.ts" />
 /// <reference path="Display.ts" />
 /// <reference path="Assembler.ts" />
 /// <reference path="cpu.ts" />
-
 var _cpu;
 
-$(document).ready(() => {
+$(document).ready(()=> {
     _cpu = new CPU();
 
     $('#executeButton').click(ExecuteButtonClick);
-    $('#clearConsoleButton').click(() => Display.clearConsole());
+    $('#clearConsoleButton').click(()=> Display.clearConsole());
     $("#assemblyInputDiv select").change(exampleSelected);
 });
 
 function ExecuteButtonClick() {
     var config = new Configuration();
-    if (!config.valid()) return;
-   
+    if (!config.validate()) return;
+
     _cpu.configure(config);
 
     updateDisplay(_cpu);
-
 
     var input = $('#assemblyInputDiv textarea').text();
 
@@ -31,11 +29,15 @@ function ExecuteButtonClick() {
 
     var pipeline = new Pipeline(instructions);
 
+    Display.writeLine("Execution Started.", Enums.Style.Heading);
+
     //try {
         pipeline.start();
     //} catch (e) {
         //Display.writeLine(e.message, Enums.Style.Error);
     //}
+
+    Display.writeLine("Execution Terminated.", Enums.Style.Heading);
 
     updateDisplay(_cpu);
 }
@@ -44,6 +46,7 @@ function updateDisplay(cpu: CPU) {
     Display.clearTables();
     Display.updateRegisterTable(cpu.RegisterFile);
     Display.updateMemoryTable(cpu);
+    Display.updateStats();
 }
 
 function exampleSelected(event) {

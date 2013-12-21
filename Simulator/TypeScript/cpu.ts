@@ -1,3 +1,4 @@
+///<reference path="Instrumentation.ts"/>
 class CPU {
 
     public RegisterFile: number[];
@@ -8,11 +9,13 @@ class CPU {
     public FetchUnit: FetchUnit;
     public ReservationStation: ReservationStation;
     public Config: Configuration;
+    public Stats : Instrumentation;
 
     constructor() {}
 
     public configure(configuration: Configuration) {
         this.Config = configuration;
+        this.Stats = new Instrumentation();
         this.reset();
     }
 

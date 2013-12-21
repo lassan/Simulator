@@ -1,6 +1,4 @@
 class DecodeUnit {
-
-
     constructor() {}
 
     decode(instruction: Instructions.Instruction): void {
@@ -28,7 +26,6 @@ class DecodeUnit {
 
         _cpu.ReservationStation.add(rsEntry);
     }
-
 
     decodeArithmeticInstruction(instruction): ReservationStationEntry {
         /// <summary>
@@ -99,5 +96,4 @@ class DecodeUnit {
 
         return rsEntry;
     }
-
 }

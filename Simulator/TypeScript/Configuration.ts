@@ -11,18 +11,37 @@ class Configuration {
         this._config["sizeRS"] = $("input[name=sizeRS]").val();
         this._config["outOfOrder"] = $("input[name=outOfOrder").is(":checked");
         this._config["outputState"] = $("input[name=outputState]").is(":checked");
+        this._config["branchPredictor"] = $("#branchPrediction").children("option").filter(":selected").text();
     }
 
-    public valid(): boolean {
-        for (var key in this._config) {
-            if ((this._config[key] == null && this._config[key] <= 0) && this._config[key] != true && this._config[key] != false) {
-                alert(key + " invalid.");
+    public validateNumeric(array) : boolean {
+        for (var key in array) {
+            if (array[key] == null || array[key] < 1) {
+                alert(key + "invalid");
                 return false;
-            } else {
-
             }
         }
         return true;
+    }
+
+    public validateBoolean(array): boolean {
+        for (var key in array) {
+            if (array[key] != true || array[key] != false) {
+                alert(key + "invalid");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public validate(): boolean {
+        var numbers = this._config.splice(0, 5);
+        var options = this._config.splice(5, 2);
+
+        var numeric = this.validateNumeric(numbers);
+        var trueFalse = this.validateBoolean(options);
+
+        return numeric && trueFalse;
     }
 
     public getNumAlu() {
@@ -57,4 +76,7 @@ class Configuration {
         return this._config["outputState"];
     }
 
+    public branchPredictor() {
+        return this._config["branchPredictor"];
+    }
 }
