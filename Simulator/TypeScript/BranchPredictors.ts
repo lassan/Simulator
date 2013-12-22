@@ -4,8 +4,6 @@ module BranchPredictors {
         predict(instruction: Instructions.Instruction, currentPc: number): number;
         branchTaken(prediction: boolean);
         branchNotTaken(prediction: boolean); //This method should set the program counter to where it would've been 
-
-        LinkRegister:number[];
     }
 
     function isBranchInstruction(instruction: Instructions.Instruction) {
@@ -16,12 +14,13 @@ module BranchPredictors {
     export class Dynamic implements BranchPredictor {
 
         private BranchTable: number[][];
-        public LinkRegister: number[];
+        private _linkStack: number[];
 
         public WillBranch: boolean;
 
         constructor() {
             this.BranchTable = [];
+            this._linkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
@@ -36,7 +35,7 @@ module BranchPredictors {
                 this.BranchTable[key] = [3, +instruction.operands[0]];
             }
 
-            this.LinkRegister = [key];
+            this._linkStack.push(key);
 
             if (instruction instanceof Instructions.B) {
                 nextPc = +instruction.operands[0];
@@ -54,29 +53,25 @@ module BranchPredictors {
             return nextPc;
         }
 
-        branchTaken(prediction : boolean) {
+        branchTaken(prediction: boolean) {
 
-            var key = this.LinkRegister[0];
+            var key = this._linkStack.shift();
 
             if (!prediction)
                 _cpu.setProgramCounter(this.BranchTable[key][1]);
 
             if (this.BranchTable[key][0] < 3)
                 this.BranchTable[key][0]++;
-
-            this.LinkRegister = null;
         }
 
         branchNotTaken(prediction: boolean) {
-            var key = this.LinkRegister[0];
+            var key = this._linkStack.shift();
 
             if (prediction)
                 _cpu.setProgramCounter(key + 1);
 
             if (this.BranchTable[key][0] > 0)
                 this.BranchTable[key][0]--;
-
-            this.LinkRegister = null;
         }
     }
 
@@ -84,16 +79,16 @@ module BranchPredictors {
         /// <summary>
         ///     All branches are always taken
         /// </summary>
-        public LinkRegister: number[];
+        private _linkStack: number[];
 
         constructor() {
+            this._linkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
             isBranchInstruction(instruction);
 
-            this.LinkRegister = [currentPc];
-
+            this._linkStack.push(currentPc);
             var nextPc: number = +instruction.operands[0];
             instruction.willBranch = true;
 
@@ -101,15 +96,12 @@ module BranchPredictors {
         }
 
         branchTaken(prediction: boolean) {
-            //therefore success
-            this.LinkRegister = null;
+            this._linkStack.shift();
         }
 
         branchNotTaken(prediction: boolean) {
             //prediction unsuccessful
-            var pc = this.LinkRegister[0] + 1;
-            _cpu.setProgramCounter(pc);
-            this.LinkRegister = null;
+            _cpu.setProgramCounter(this._linkStack.shift() + 1);
         }
 
     }
@@ -118,17 +110,16 @@ module BranchPredictors {
         /// <summary>
         ///     Backward branches are always taken. Forward branches are not
         /// </summary>
-        public LinkRegister :number[];
+        private _linkStack: number[][];
 
         constructor() {
+            this._linkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
             isBranchInstruction(instruction);
             var posPc: number = +instruction.operands[0];
-
-            this.LinkRegister = [currentPc, posPc];
-
+            this._linkStack.push([currentPc, posPc]);
             var nextPc: number;
 
             if (instruction instanceof Instructions.B) {
@@ -145,25 +136,23 @@ module BranchPredictors {
                     nextPc = posPc;
                 }
             }
+
             return nextPc;
         }
 
-        branchTaken(prediction:boolean) {
-            if (!prediction) {
-                //go to where the branch would've taken you
-                _cpu.setProgramCounter(this.LinkRegister[1]);
-            }
+        branchTaken(prediction: boolean) {
+            var l = this._linkStack.shift();
 
-            this.LinkRegister = null;
+            if (!prediction) {
+                _cpu.setProgramCounter(l[1]);
+            }
         }
 
-        branchNotTaken(prediction:boolean) {
-            var pc = this.LinkRegister[0] + 1;
+        branchNotTaken(prediction: boolean) {
+            var l = this._linkStack.shift();
 
             if (prediction)
-                _cpu.setProgramCounter(pc);
-
-            this.LinkRegister = null;
+                _cpu.setProgramCounter(l[0] + 1);
         }
 
     }
@@ -172,15 +161,15 @@ module BranchPredictors {
         /// <summary>
         ///     No branches are to ever taken, except for an unconditional branch
         /// </summary>
-        public LinkRegister: number[];
+        private _linkStack: number[];
 
-        constructor() {}
+        constructor() {
+            this._linkStack = [];
+        }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
             isBranchInstruction(instruction);
-
-            this.LinkRegister = [+instruction.operands[0]];
-            
+            this._linkStack.push(+instruction.operands[0]);
             var nextPc: number;
             instruction.willBranch = false;
 
@@ -195,14 +184,13 @@ module BranchPredictors {
 
         branchTaken(prediction: boolean) {
             //Prediction was unsuccessful
-            var pc = this.LinkRegister[0];
-            _cpu.setProgramCounter(pc);
-            this.LinkRegister = null;
+            _cpu.setProgramCounter(this._linkStack.shift());
+
         }
 
         branchNotTaken(prediction: boolean) {
             //Prediction was successfull
-            this.LinkRegister = null;
+            this._linkStack.shift();
         }
 
     }

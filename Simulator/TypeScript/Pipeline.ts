@@ -177,37 +177,6 @@ class Pipeline {
 
             destination.value = result;
 
-            if (units[i].type == Enums.ExecutionUnit.BranchUnit) {
-                var willBranch = destination.instruction.willBranch;
-                if (result == -1 && willBranch) {
-                    // branch not taken but was prediced to be taken
-                    _cpu.FetchUnit.BranchPredictor.branchNotTaken(willBranch);
-                    this.flush(destination);
-
-                    _cpu.Stats.notBranch();
-                    _cpu.Stats.predictionFail();
-
-                } else if (result >= 0 && (willBranch == false)) {
-                    //branch taken but was predicted to not be taken
-                    _cpu.FetchUnit.BranchPredictor.branchTaken(willBranch);
-                    this.flush(destination);
-
-                    _cpu.Stats.branch();
-                    _cpu.Stats.predictionFail();
-
-                } else if (result >= 0) {
-                    _cpu.FetchUnit.BranchPredictor.branchTaken(willBranch);
-
-                    _cpu.Stats.branch();
-                    _cpu.Stats.predictionSuccess();
-
-                } else if (result == -1) {
-                    _cpu.FetchUnit.BranchPredictor.branchNotTaken(willBranch);
-
-                    _cpu.Stats.notBranch();
-                    _cpu.Stats.predictionSuccess();
-                }
-            }
         }
 
         if (_cpu.Config.shouldOutputState())
@@ -224,9 +193,40 @@ class Pipeline {
         for (var i in buffer) {
             if ($.isNumeric(buffer[i].value)) {
                 //If the reorder buffer contains a numeric value, that means that instruction is compelte and has been written back, so commit the result to the registerFIle
-                if (buffer[i].destination == "pc") {
+                if (buffer[i].instruction.type == Enums.ExecutionUnit.BranchUnit ) {
                     //prevent any branch instructions from overwriting the pc as this is handled by the fetch unit and branch prediction, etc
                     committed.push(buffer[i]); //include it in the commited list anyway so that it gets removed from the ReOrderBuffer by the end of this cycle
+
+                    var willBranch = buffer[i].instruction.willBranch;
+                    if (buffer[i].value == -1 && willBranch) {
+                        // branch not taken but was prediced to be taken
+                        _cpu.FetchUnit.BranchPredictor.branchNotTaken(willBranch);
+                        this.flush(buffer[i]);
+
+                        _cpu.Stats.notBranch();
+                        _cpu.Stats.predictionFail();
+
+                    } else if (buffer[i].value >= 0 && (willBranch == false)) {
+                        //branch taken but was predicted to not be taken
+                        _cpu.FetchUnit.BranchPredictor.branchTaken(willBranch);
+                        this.flush(buffer[i]);
+
+                        _cpu.Stats.branch();
+                        _cpu.Stats.predictionFail();
+
+                    } else if (buffer[i].value >= 0) {
+                        _cpu.FetchUnit.BranchPredictor.branchTaken(willBranch);
+
+                        _cpu.Stats.branch();
+                        _cpu.Stats.predictionSuccess();
+
+                    } else if (buffer[i].value == -1) {
+                        _cpu.FetchUnit.BranchPredictor.branchNotTaken(willBranch);
+
+                        _cpu.Stats.notBranch();
+                        _cpu.Stats.predictionSuccess();
+                    }
+
                 } else {
                     numCommited++;
                     committed.push(buffer[i]);
