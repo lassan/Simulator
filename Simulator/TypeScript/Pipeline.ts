@@ -28,32 +28,23 @@ class Pipeline {
             if (_cpu.Config.shouldOutputState())
                 Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
-            window.console.log(pipelineCounter);
-
-            window.console.log("commit");
             this.clockTick();
             this.commit();
 
-            window.console.log("writeback");
             this.clockTick();
             this.writeback();
 
-            window.console.log("execute");
             this.clockTick();
             this.execute();
 
-            window.console.log("dispatch");
             this.clockTick();
             this.dispatch();
 
-            window.console.log("decode");
             this.clockTick();
             this.decode();
 
-            window.console.log("fetch");
             this.clockTick();
             this.fetch();
-
 
             if (_cpu.Config.shouldOutputState())
                 Display.writeLine('');
@@ -171,8 +162,8 @@ class Pipeline {
             var destination = units[i].destination;
 
             var result = units[i].getResult();
-            if (result == null)
-                throw Error("Result should never be null.");
+            //if (result == null)
+            //    throw Error("Result should never be null.");
 
 
             destination.value = result;
@@ -188,14 +179,16 @@ class Pipeline {
         var committed: ReOrderBufferEntry[] = [];
 
         var buffer = _cpu.ReOrderBuffer.toArray();
-        var numCommited = 0;    //for instrumentation
+        var numCommited = 0; //for instrumentation
 
         for (var i in buffer) {
             if ($.isNumeric(buffer[i].value)) {
                 //If the reorder buffer contains a numeric value, that means that instruction is compelte and has been written back, so commit the result to the registerFIle
-                if (buffer[i].instruction.type == Enums.ExecutionUnit.BranchUnit ) {
+
+
+                if (buffer[i].instruction.type == Enums.ExecutionUnit.BranchUnit) {
                     //prevent any branch instructions from overwriting the pc as this is handled by the fetch unit and branch prediction, etc
-                    committed.push(buffer[i]); //include it in the commited list anyway so that it gets removed from the ReOrderBuffer by the end of this cycle
+                    committed.push(buffer[i]);
 
                     var willBranch = buffer[i].instruction.willBranch;
                     if (buffer[i].value == -1 && willBranch) {
@@ -205,6 +198,7 @@ class Pipeline {
 
                         _cpu.Stats.notBranch();
                         _cpu.Stats.predictionFail();
+                        break;
 
                     } else if (buffer[i].value >= 0 && (willBranch == false)) {
                         //branch taken but was predicted to not be taken
@@ -213,6 +207,7 @@ class Pipeline {
 
                         _cpu.Stats.branch();
                         _cpu.Stats.predictionFail();
+                        break;
 
                     } else if (buffer[i].value >= 0) {
                         _cpu.FetchUnit.BranchPredictor.branchTaken(willBranch);
@@ -228,9 +223,11 @@ class Pipeline {
                     }
 
                 } else {
-                    numCommited++;
-                    committed.push(buffer[i]);
+
+                    numCommited++; //For stats, only count non branch instructions that are committed
                     _cpu.RegisterFile[buffer[i].destination] = buffer[i].value;
+                    committed.push(buffer[i]);
+
                 }
             } else {
                 break;

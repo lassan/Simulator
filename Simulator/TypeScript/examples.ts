@@ -4,11 +4,12 @@
 }
 
 class Examples {
-    private _array :ExampleEntry[];
+    private _array: ExampleEntry[];
 
     constructor() {
         this._array = [];
     }
+
 }
 
 var _examples = {};
@@ -183,7 +184,7 @@ _examples["LDR"] = {
     }
 };
 
-_examples["Simple while loop"] = {
+_examples["While Loop"] = {
     assembly:
         "MOV r0 5\n" +
             "MOV r1 100\n" +
@@ -201,61 +202,202 @@ _examples["Simple while loop"] = {
     }
 };
 
-_examples["For loop with arrays"] = {
+_examples["Unrolled While Loop"] = {
     assembly:
-        "MOV 0 r0\n" + //counter
-            "MOV 0 r1\n" + //address for a
-            "MOV 0 r7\n" + //starting memory location
-            "ST 0 r7\n" +
-            "ADDI 1 r7 r7\n" +
-            "ST 1 r7\n" +
-            "ADDI 1 r7 r7\n" +
-            "ST 2 r7\n" +
-            "ADDI 1 r7 r7\n" +
-            "\n" +
-            "CPY r7 r2\n" + //address for b
-            "ST 5 r7\n" +
-            "ADDI 1 r7 r7\n" +
-            "ST 5 r7\n" +
-            "ADDI 1 r7 r7\n" +
-            "ST 6 r7\n" +
-            "ADDI 1 r7 r7\n" +
-            "ST 8 r7\n" +
-            "\n" +
-            "MOV 3 r3\n" + //counter limit
-            "loop_begin:\n" +
-            "CMP r0 r3\n" +
-            "BEQ loop_end\n" +
-            "ADD r0 r1 r4\n" +
-            "ADD r0 r2 r5\n" +
-            "LDR r4 r6\n" +
-            "STR r6 r5\n" +
-            "ADDI 1 r0 r0\n" + //increment counter
-            "B loop_begin\n" +
-            "\n" +
-            "loop_end:\n"
-};
-
-_examples["Euclidean Algorithm"] = {
-    assembly:
-        "MOV r0 81\n" +
-            "MOV r1 45\n" +
+        "MOV r0 5\n" +
+            "MOV r1 100\n" +
             "\n" +
             "loop_begin:\n" +
-            "CMP r1 r0\n" +
-            "BEQ loop_end\n" +
-            "BGT greater_than\n" +
-            "SUB r0 r1 r1\n" +
-            "B loop_begin\n" +
-            "\n" +
-            "greater_than:\n" +
-            "SUB r1 r0 r0\n" +
+            "CMP r0 r1\n" +
+            "BGE loop_end\n" +
+            "ADDI r0 r0 1\n" +
+            "ADDI r0 r0 1\n" +
+            "ADDI r0 r0 1\n" +
+            "ADDI r0 r0 1\n" +
+            "ADDI r0 r0 1\n" +
             "B loop_begin\n" +
             "\n" +
             "loop_end:\n" +
-            "ADDI r3 r1 0\n",
+            "MOV r3 -1",
     assertions: {
-        "r0": 5,
-        "r3": 5
+        "r3": -1
     }
+};
+
+_examples["Superscalar"] =
+{
+    assembly: "MOV r0 42\n" +
+        "MOV r0 42\n" +
+        "MOV r1 42\n" +
+        "MOV r2 42\n" +
+        "MOV r3 42\n" +
+        "MOV r4 42\n" +
+        "MOV r5 42\n" +
+        "MOV r0 42\n" +
+        "MOV r0 42\n" +
+        "MOV r1 42\n" +
+        "MOV r2 42\n" +
+        "MOV r3 42\n" +
+        "MOV r4 42\n" +
+        "MOV r5 42\n" +
+        "MOV r0 42\n" +
+        "MOV r0 42\n" +
+        "MOV r1 42\n" +
+        "MOV r2 42\n" +
+        "MOV r3 42\n" +
+        "MOV r4 42\n" +
+        "MOV r5 42\n" +
+        "MOV r0 42\n" +
+        "MOV r0 42\n" +
+        "MOV r1 42\n" +
+        "MOV r2 42\n" +
+        "MOV r3 42\n" +
+        "MOV r4 42\n" +
+        "MOV r5 42\n" +
+        "MOV r0 42\n" +
+        "MOV r0 42\n" +
+        "MOV r1 42\n" +
+        "MOV r2 42\n" +
+        "MOV r3 42\n" +
+        "MOV r4 42\n" +
+        "MOV r5 42\n" +
+        "MOV r0 42\n" +
+        "MOV r0 42\n" +
+        "MOV r1 42\n" +
+        "MOV r2 42\n" +
+        "MOV r3 42\n" +
+        "MOV r4 42\n" +
+        "MOV r5 42\n"
+};
+
+_examples["Fibonacci Sequence Generator"] = {
+    assembly: "MOV r0 16\n" +
+        "MOV r1 0\n" +
+        "MOV r2 1\n" +
+        "MOV r3 0\n" +
+        "\n" +
+        "Loop:\n" +
+        "CMP r3 r0\n" +
+        "BGE End\n" +
+        "STR r3 r1\n" +
+        "ADD r4 r1 r2\n" +
+        "ADDI r1 r2 0\n" +
+        "ADDI r2 r4 0\n" +
+        "ADDI r3 r3 1\n" +
+        "B Loop\n" +
+        "\n" +
+        "End:"
+};
+
+_examples["Bubble Sort"] = {
+    assembly: "MOV r13 4\n" +
+        "MOV r0 0\n" +
+        "MOV r1 5\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "MOV r1 7\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "MOV r1 -4\n" +
+        "STR r0 r1\n" +
+        "ADD r0 r0 1\n" +
+        "MOV r1 6\n" +
+        "STR r0 r1\n" +
+        "\n" +
+        "MOV r11 -1\n" +
+        "SUBI r12 r13 1\n" +
+        "\n" +
+        "OuterLoop:\n" +
+        "ADDI r11 r11 1\n" +
+        "CMP r11 r12\n" +
+        "BGE End\n" +
+        "MOV r10 -1\n" +
+        "SUB r9 r12 r11\n" +
+        "InnerLoop:\n" +
+        "ADDI r10 r10 1\n" +
+        "CMP r10 r9\n" +
+        "BGE OuterLoop\n" +
+        "\n" +
+        "LDR r8 r10\n" +
+        "ADDI r7 r10 1\n" +
+        "LDR r6 r7\n" +
+        "\n" +
+        "CMP r8 r6\n" +
+        "BLE InnerLoop\n" +
+        "\n" +
+        "STR r10 r6\n" +
+        "STR r7 r8\n" +
+        "\n" +
+        "B InnerLoop\n" +
+        "B OuterLoop\n" +
+        "End:"
+};
+
+_examples["Convolution"] =
+{
+    assembly: "MOV r0 0\n" + //counter
+        "MOV r1 1\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r1 2\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r1 3\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r1 4\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r1 5\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r1 6\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r1 7\n" +
+        "STR r0 r1\n" +
+        "ADDI r0 r0 1\n" +
+        "\n" +
+        "MOV r0 3\n" + //lenA
+        "MOV r1 7\n" + //lenB - actually where second array ends
+        "MOV r2 8\n" + //nconv
+        "MOV r3 0\n" + //i
+        "MOV r4 3\n" + //j	- where second array starts
+        "MOV r12 0\n" + //for comparison
+        "MOV r13 8\n" + //location of output
+        "OuterLoop:\n" +
+        "CMP r3 r2\n" +
+        "BGE OuterLoopEnd\n" +
+        "ADD r5 r3 0\n" + //i1\n" + 
+        "MOV r6 0\n" + //temp + 
+        "\n" +
+        "InnerLoop:\n" +
+        "CMP r4 r1\n" +
+        "BGE InnerLoopEnd\n" +
+        "\n" +
+        "CMP r5 r12\n" +
+        "BLT ConditionEnd\n" +
+        "CMP r5 r0\n" +
+        "BGE ConditionEnd\n" +
+        "LDR r8 r5\n" + //A[i1]
+        "LDR r7 r4\n" + //B[j-lenA]
+        "MUL r8 r7 r8\n" +
+        "ADD r6 r6 r8\n" +
+        "\n" +
+        "ConditionEnd:\n" +
+        "SUB r5 r5 1\n" +
+        "STR r13 r6\n" +
+        "ADDI r13 r13 1\n" +
+        "ADDI r4 r4 1\n" + //increment j
+        "B InnerLoop\n" +
+        "InnerLoopEnd:\n" +
+        "ADDI r3 r3 1\n" + //increment i
+        "B OuterLoop\n" +
+        "OuterLoopEnd:\n"
 };

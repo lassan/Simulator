@@ -32,9 +32,9 @@ function ExecuteButtonClick() {
     Display.writeLine("Execution Started.", Enums.Style.Heading);
 
     //try {
-        pipeline.start();
+    pipeline.start();
     //} catch (e) {
-        //Display.writeLine(e.message, Enums.Style.Error);
+    //Display.writeLine(e.message, Enums.Style.Error);
     //}
 
     Display.writeLine("Execution Terminated.", Enums.Style.Heading);
@@ -56,6 +56,22 @@ function exampleSelected(event) {
     ///     which can then be executed by pressing one of the buttons
     /// </summary>
     var exampleName = event.target.value;
+
+    if (exampleName.toLowerCase() == "convolution") {
+        $("input[name=speculativeBranchDepth]").val(32);
+        $("input[name=numDecode]").val(1);
+        $("#branchPrediction").val(1);
+    } else if (exampleName.toLowerCase() == "bubble sort") {
+        $("input[name=speculativeBranchDepth]").val(1);
+        $("#branchPrediction").val(1);
+    } else if (exampleName.toLowerCase() == "superscalar") {
+        $("input[name=numDecode]").val(16);
+        $("input[name=numAlu]").val(16);
+    } else {
+        $("input[name=speculativeBranchDepth]").val(4);
+        $("#branchPrediction").val(3);
+    }
+
     var textToInsert;
     if (_examples[exampleName] == null)
         textToInsert = "There is no corresponding example. Sorry!";

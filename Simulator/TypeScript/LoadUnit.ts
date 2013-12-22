@@ -10,7 +10,7 @@ class LoadUnit extends ExecutionUnit {
         /// <summary>
         ///     LDR dst src - memory address in src, contents of memory will be stored in dst
         /// </summary>
-        this.delay = 12;
+        this.delay = 18;
         this._address = this.operands[0];
     }
 

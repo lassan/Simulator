@@ -38,8 +38,8 @@
     <body>
         <div id="topRectangle"> </div>
         <div id="headerContent">
-            <h1>Simulator</h1>
-            <h2>By Hassan Munir</h2>
+            <h1>Processor Simulator</h1>
+            <h2>COMSM0109</h2>
         </div>
         <div id="mainContent">
             
@@ -209,16 +209,17 @@
                         Load <input name="numLoad" type="number" value ="2"/><br />
                         Store <input name="numStore" type="number" value="1" /><br />
                         Decode <input name="numDecode" type="number" value="4"/><br/>
+                        <hr />
                         Size of Reservation Station <input name="sizeRS" value="32"/><br />
-                        Speculative Branch Depth <input name="speculativeBranchDepth" value="32"><br/>
+                        Speculative Execution Depth <input name="speculativeBranchDepth" value="4"><br/>
                         <hr/>
                         Out of Order <input name="outOfOrder" type="checkbox" checked="checked"/><br/>
                         Output Pipeline State (slow) <input name="outputState" type="checkbox"/><br/>
                         Branch Prediction <select id="branchPrediction">
-                                              <option>Dynamic</option>
-                                              <option>Displacement</option>
-                                              <option>AlwaysTaken</option>
-                                              <option>NeverTaken</option>
+                                              <option value="1">Displacement</option>
+                                              <option value="2">AlwaysTaken</option>                      
+                                              <option value="3">Dynamic</option>
+                                              <option value="4">NeverTaken</option>
                                           </select>
                     </div>
                 </div>
@@ -250,9 +251,12 @@
                                 <option>STR</option>
                             </optgroup>
                             <optgroup label="Benchmark Programs">
-                                <option>Simple while loop</option>
-                                <option>Euclidean Algorithm</option>
-                                <option>For loop with arrays</option>
+                                <option>Superscalar</option>
+                                <option>While Loop</option>
+                                <option>Unrolled While Loop</option>
+                                <option>Fibonacci Sequence Generator</option>
+                                <option>Bubble Sort</option>
+                                <option>Convolution</option>
                             </optgroup>
                         </select>
                         <textarea></textarea>
@@ -264,6 +268,8 @@
                     <div>
                         <ul>
                             <li>No input validation is performed. If you enter an instruction incorrectly, the processor will probably go in an infinite loop.</li>
+                            <li>Bubble sort doesn't work correctly with Speculative Execution Depth > 1 and prediction strategies Dynamic and NeverTaken. Probably something to with memory consistency.</li>
+                            <li>Basically, Branch prediction and Load/Store instructions don't seem to mix. So, Convolution is just broken.</li>
                         </ul>
                     </div>
                 </div>

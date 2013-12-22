@@ -79,32 +79,31 @@ class ReservationStation {
         return this._entries.length == 0;
     }
 
-    flush(entry : ReOrderBufferEntry) {
-        
+    flush(entry: ReOrderBufferEntry) {
+        this._entries = [];
+        //var robEntriesToRemove = _cpu.ReOrderBuffer.getEntriesAfter(entry);
+        //var elementsToRemove: ReservationStationEntry[] = [];
 
-        var robEntriesToRemove = _cpu.ReOrderBuffer.getEntriesAfter(entry);
-        var elementsToRemove: ReservationStationEntry[] = [];
+        //var indexes = $.map(this._entries, (obj, index)=> {
+        //    for (var i in robEntriesToRemove) {
+        //        if (obj.robEntry == robEntriesToRemove[i])
+        //            return index;
+        //    }
+        //});
 
-        var indexes = $.map(this._entries, (obj, index)=> {
-            for (var i in robEntriesToRemove) {
-                if (obj.robEntry == robEntriesToRemove[i])
-                    return index;
-            }
-        });
+        //for (var i = 0; i < indexes.length; i++)
+        //    delete this._entries[indexes[i]];
 
-        for (var i = 0; i < indexes.length; i++)
-            delete this._entries[indexes[i]];
+        ////Remove undefined and nulls from the array
+        //var newArr = [];
+        //for (var index in this._entries) {
 
-        //Remove undefined and nulls from the array
-        var newArr = [];
-        for (var index in this._entries) {
+        //    if (this._entries[index]) {
+        //        newArr.push(this._entries[index]);
+        //    }
+        //}
 
-            if (this._entries[index]) {
-                newArr.push(this._entries[index]);
-            }
-        }
-
-        this._entries = newArr;
+        //this._entries = newArr;
     }
 
 }

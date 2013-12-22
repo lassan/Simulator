@@ -10,12 +10,12 @@ class BranchUnit extends ExecutionUnit {
     }
 
     b(): void {
-        this.delay = 4;
+        this.delay = 3;
         this.result = this.operands[0];
     }
 
     beq(): void {
-        this.delay = 4;
+        this.delay = 3;
         if (this.operands[1] == 0)
             this.result = this.operands[0];
         else
@@ -23,7 +23,7 @@ class BranchUnit extends ExecutionUnit {
     }
 
     bne(): void {
-        this.delay = 4;
+        this.delay = 3;
         if (this.operands[1] != 0)
             this.result = this.operands[0];
         else
@@ -31,7 +31,7 @@ class BranchUnit extends ExecutionUnit {
     }
 
     bgt(): void {
-        this.delay = 4;
+        this.delay = 3;
         if (this.operands[1] > 0)
             this.result = this.operands[0];
         else
@@ -39,7 +39,7 @@ class BranchUnit extends ExecutionUnit {
     }
 
     blt(): void {
-        this.delay = 4;
+        this.delay = 3;
         if (this.operands[1] < 0)
             this.result = this.operands[0];
         else
@@ -47,7 +47,7 @@ class BranchUnit extends ExecutionUnit {
     }
 
     bge(): void {
-        this.delay = 4;
+        this.delay = 3;
         if (this.operands[1] >= 0)
             this.result = this.operands[0];
         else this.result = -1;
@@ -55,7 +55,7 @@ class BranchUnit extends ExecutionUnit {
     }
 
     ble(): void {
-        this.delay = 4;
+        this.delay = 3;
         if (this.operands[1] <= 0)
             this.result = this.operands[0];
         else this.result = -1;

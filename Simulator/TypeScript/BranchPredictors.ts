@@ -3,7 +3,7 @@ module BranchPredictors {
     export interface BranchPredictor {
         predict(instruction: Instructions.Instruction, currentPc: number): number;
         branchTaken(prediction: boolean);
-        branchNotTaken(prediction: boolean); //This method should set the program counter to where it would've been 
+        branchNotTaken(prediction: boolean);
         LinkStack: number[];
     }
 
@@ -12,9 +12,15 @@ module BranchPredictors {
             throw Error("Can not predit a non branch instruction, you numpty");
     }
 
+
+    class BranchTableEntry {
+        constructor(public weight: number, public address: number) {}
+    }
+
+
     export class Dynamic implements BranchPredictor {
 
-        private BranchTable: number[][];
+        private BranchTable: BranchTableEntry[];
         LinkStack: number[];
 
         public WillBranch: boolean;
@@ -33,7 +39,7 @@ module BranchPredictors {
 
             if (!this.BranchTable.hasOwnProperty(currentPc.toString())) {
                 //add to the branch history, initialised as "strongly taken"
-                this.BranchTable[key] = [3, +instruction.operands[0]];
+                this.BranchTable[key] = new BranchTableEntry(3, +instruction.operands[0]);
             }
 
             this.LinkStack.push(key);
@@ -42,10 +48,10 @@ module BranchPredictors {
                 nextPc = +instruction.operands[0];
                 instruction.willBranch = true;
             } else {
-                if (this.BranchTable[key][0] > 1) {
+                if (this.BranchTable[key].weight > 1) {
                     //branch should be taken
                     instruction.willBranch = true;
-                    nextPc = this.BranchTable[key][1];
+                    nextPc = this.BranchTable[key].address;
                 } else {
                     instruction.willBranch = false;
                     nextPc = currentPc + 1;
@@ -59,10 +65,10 @@ module BranchPredictors {
             var key = this.LinkStack.shift();
 
             if (!prediction)
-                _cpu.setProgramCounter(this.BranchTable[key][1]);
+                _cpu.setProgramCounter(this.BranchTable[key].address);
 
-            if (this.BranchTable[key][0] < 3)
-                this.BranchTable[key][0]++;
+            if (this.BranchTable[key].weight < 3)
+                this.BranchTable[key].weight++;
         }
 
         branchNotTaken(prediction: boolean) {
@@ -71,8 +77,8 @@ module BranchPredictors {
             if (prediction)
                 _cpu.setProgramCounter(key + 1);
 
-            if (this.BranchTable[key][0] > 0)
-                this.BranchTable[key][0]--;
+            if (this.BranchTable[key].weight > 0)
+                this.BranchTable[key].weight--;
         }
 
     }

@@ -36,7 +36,7 @@ class ReOrderBuffer {
         var index = this._array.indexOf(entry);
         if (index == -1) throw Error("Entry to start flushing from not in the reorder buffer.");
 
-        index = index + 1;  //to not delete the instruction that caused the flush
+        index = index ;  //to not delete the instruction that caused the flush
         if (index >= this._array.length)
             return;
 
@@ -48,6 +48,8 @@ class ReOrderBuffer {
     getEntriesAfter(entry: ReOrderBufferEntry) {
         var array: ReOrderBufferEntry[] = [];
         var index = this._array.indexOf(entry);
+        if (index == -1) throw Error("Entry to start flushing from not in the reorder buffer.");
+
         for (index = index + 1; index < this._array.length; index++) {
             array.push(this._array[index]);
         }

@@ -69,7 +69,7 @@ module Instructions {
     }
 
     /***************************************/
-    /******* MemoryUnit instructions *******/
+    /******* LoadStore instructions *******/
     /***************************************/
 
     export class LDR extends Instruction {

@@ -40,7 +40,6 @@ module Display {
 
     export function printArray(array: any, heading: string): void {
         Display.writeLine(heading, Enums.Style.Heading);
-        window.console.group(heading);
 
         var i = 0;
         for (var key in array) {
@@ -49,7 +48,6 @@ module Display {
 
             if (array[key] != null) {
                 Display.writeLine(array[key].toString());
-                window.console.log(array[key].toString());
             }
 
 
