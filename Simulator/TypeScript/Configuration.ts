@@ -9,6 +9,7 @@ class Configuration {
         this._config["store"] = $("input[name=numStore]").val();
         this._config["decode"] = $("input[name=numDecode]").val();
         this._config["sizeRS"] = $("input[name=sizeRS]").val();
+        this._config["speculativeBranchDepth"] = $("input[name=speculativeBranchDepth]").val();
         this._config["outOfOrder"] = $("input[name=outOfOrder").is(":checked");
         this._config["outputState"] = $("input[name=outputState]").is(":checked");
         this._config["branchPredictor"] = $("#branchPrediction").children("option").filter(":selected").text();
@@ -66,6 +67,10 @@ class Configuration {
 
     public getSizeRS() {
         return this._config["sizeRS"];
+    }
+
+    public getSpeculativeBranchingDepth() {
+        return this._config["speculativeBranchDepth"];
     }
 
     public isOutOfOrder() {

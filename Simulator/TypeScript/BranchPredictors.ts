@@ -4,6 +4,7 @@ module BranchPredictors {
         predict(instruction: Instructions.Instruction, currentPc: number): number;
         branchTaken(prediction: boolean);
         branchNotTaken(prediction: boolean); //This method should set the program counter to where it would've been 
+        LinkStack: number[];
     }
 
     function isBranchInstruction(instruction: Instructions.Instruction) {
@@ -14,13 +15,13 @@ module BranchPredictors {
     export class Dynamic implements BranchPredictor {
 
         private BranchTable: number[][];
-        private _linkStack: number[];
+        LinkStack: number[];
 
         public WillBranch: boolean;
 
         constructor() {
             this.BranchTable = [];
-            this._linkStack = [];
+            this.LinkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
@@ -35,7 +36,7 @@ module BranchPredictors {
                 this.BranchTable[key] = [3, +instruction.operands[0]];
             }
 
-            this._linkStack.push(key);
+            this.LinkStack.push(key);
 
             if (instruction instanceof Instructions.B) {
                 nextPc = +instruction.operands[0];
@@ -55,7 +56,7 @@ module BranchPredictors {
 
         branchTaken(prediction: boolean) {
 
-            var key = this._linkStack.shift();
+            var key = this.LinkStack.shift();
 
             if (!prediction)
                 _cpu.setProgramCounter(this.BranchTable[key][1]);
@@ -65,7 +66,7 @@ module BranchPredictors {
         }
 
         branchNotTaken(prediction: boolean) {
-            var key = this._linkStack.shift();
+            var key = this.LinkStack.shift();
 
             if (prediction)
                 _cpu.setProgramCounter(key + 1);
@@ -73,22 +74,23 @@ module BranchPredictors {
             if (this.BranchTable[key][0] > 0)
                 this.BranchTable[key][0]--;
         }
+
     }
 
     export class AlwaysTaken implements BranchPredictor {
         /// <summary>
         ///     All branches are always taken
         /// </summary>
-        private _linkStack: number[];
+        LinkStack: number[];
 
         constructor() {
-            this._linkStack = [];
+            this.LinkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
             isBranchInstruction(instruction);
 
-            this._linkStack.push(currentPc);
+            this.LinkStack.push(currentPc);
             var nextPc: number = +instruction.operands[0];
             instruction.willBranch = true;
 
@@ -96,12 +98,12 @@ module BranchPredictors {
         }
 
         branchTaken(prediction: boolean) {
-            this._linkStack.shift();
+            this.LinkStack.shift();
         }
 
         branchNotTaken(prediction: boolean) {
             //prediction unsuccessful
-            _cpu.setProgramCounter(this._linkStack.shift() + 1);
+            _cpu.setProgramCounter(this.LinkStack.shift() + 1);
         }
 
     }
@@ -110,16 +112,22 @@ module BranchPredictors {
         /// <summary>
         ///     Backward branches are always taken. Forward branches are not
         /// </summary>
-        private _linkStack: number[][];
+        LinkStack: number[];
+        private _branchTable: number[];
 
         constructor() {
-            this._linkStack = [];
+            this._branchTable = [];
+
+            this.LinkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
             isBranchInstruction(instruction);
             var posPc: number = +instruction.operands[0];
-            this._linkStack.push([currentPc, posPc]);
+
+            this.LinkStack.push(currentPc);
+            this._branchTable[currentPc] = posPc;
+
             var nextPc: number;
 
             if (instruction instanceof Instructions.B) {
@@ -141,18 +149,18 @@ module BranchPredictors {
         }
 
         branchTaken(prediction: boolean) {
-            var l = this._linkStack.shift();
+            var pc = this.LinkStack.shift();
 
             if (!prediction) {
-                _cpu.setProgramCounter(l[1]);
+                _cpu.setProgramCounter(this._branchTable[pc]);
             }
         }
 
         branchNotTaken(prediction: boolean) {
-            var l = this._linkStack.shift();
+            var pc = this.LinkStack.shift();
 
             if (prediction)
-                _cpu.setProgramCounter(l[0] + 1);
+                _cpu.setProgramCounter(pc + 1);
         }
 
     }
@@ -161,36 +169,35 @@ module BranchPredictors {
         /// <summary>
         ///     No branches are to ever taken, except for an unconditional branch
         /// </summary>
-        private _linkStack: number[];
+        LinkStack: number[];
 
         constructor() {
-            this._linkStack = [];
+            this.LinkStack = [];
         }
 
         predict(instruction: Instructions.Instruction, currentPc: number): number {
             isBranchInstruction(instruction);
-            this._linkStack.push(+instruction.operands[0]);
-            var nextPc: number;
-            instruction.willBranch = false;
 
-            if (instruction instanceof Instructions.B) {
-                nextPc = +instruction.operands[0];
-            } else {
-                nextPc = currentPc + 1;
-            }
+
+            this.LinkStack.push(+instruction.operands[0]);
+
+            var nextPc: number;
+
+            nextPc = currentPc + 1;
+            instruction.willBranch = false;
 
             return nextPc;
         }
 
         branchTaken(prediction: boolean) {
             //Prediction was unsuccessful
-            _cpu.setProgramCounter(this._linkStack.shift());
-
+            _cpu.setProgramCounter(this.LinkStack.shift());
         }
+
 
         branchNotTaken(prediction: boolean) {
             //Prediction was successfull
-            this._linkStack.shift();
+            this.LinkStack.shift();
         }
 
     }

@@ -18,13 +18,19 @@ class FetchUnit {
             } else {
 
                 var instruction = allInstructions[pc];
-                instructions.push(instruction);
 
-                if (instruction.type != Enums.ExecutionUnit.BranchUnit)
+                if (instruction.type == Enums.ExecutionUnit.BranchUnit) {
+                        if (this.BranchPredictor.LinkStack.length < _cpu.Config.getSpeculativeBranchingDepth()) {
+                        //Only ask for a prediction if the processor has not exceed speculative branching depth limit
+                        var newPc = this.BranchPredictor.predict(instruction, pc);
+                        _cpu.setProgramCounter(newPc);
+                        instructions.push(instruction);
+
+                    }
+                } else {
                     _cpu.incrementProgramCounter();
-                else {
-                    var newPc = this.BranchPredictor.predict(instruction, pc);
-                    _cpu.setProgramCounter(newPc);
+                    instructions.push(instruction);
+
                 }
             }
         }
