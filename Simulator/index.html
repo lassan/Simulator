@@ -212,11 +212,11 @@
                         Size of Reservation Station <input name="sizeRS" value="32"/>
                         <hr/>
                         Out of Order <input name="outOfOrder" type="checkbox" checked="checked"/><br/>
-                        Output Pipeline State (slow) <input name="outputState" type="checkbox"/><br/>
+                        Output Pipeline State <input name="outputState" type="checkbox"/><br/>
                         Branch Prediction <select id="branchPrediction">
+                                              <option>Dynamic</option>
                                               <option>Displacement</option>
                                               <option>AlwaysTaken</option>
-                                              <option>Dynamic</option>
                                               <option>NeverTaken</option>
                                           </select>
                     </div>
@@ -263,8 +263,6 @@
                     <div>
                         <ul>
                             <li>No input validation is performed. If you enter an instruction incorrectly, the processor will probably go in an infinite loop.</li>
-                            <li>Dynamic branch prediction is broken for out of order execution when multiple Decode units are used.</li>
-                            <li>Never taken branch prediction is broken.</li>
                         </ul>
                     </div>
                 </div>

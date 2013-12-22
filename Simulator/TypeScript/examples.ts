@@ -186,11 +186,11 @@ _examples["LDR"] = {
 _examples["Simple while loop"] = {
     assembly:
         "MOV r0 5\n" +
-            "MOV r1 10\n" +
+            "MOV r1 100\n" +
             "\n" +
             "loop_begin:\n" +
             "CMP r0 r1\n" +
-            "BEQ loop_end\n" +
+            "BGE loop_end\n" +
             "ADDI r0 r0 1\n" +
             "B loop_begin\n" +
             "\n" +

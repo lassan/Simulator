@@ -28,21 +28,30 @@ class Pipeline {
             if (_cpu.Config.shouldOutputState())
                 Display.writeLine("Cycle # " + pipelineCounter, Enums.Style.Instrumentation);
 
-            
+            window.console.log(pipelineCounter);
+
+            window.console.log("commit");
             this.clockTick();
             this.commit();
 
+            window.console.log("writeback");
             this.clockTick();
             this.writeback();
 
+            window.console.log("execute");
             this.clockTick();
             this.execute();
 
+            window.console.log("dispatch");
             this.clockTick();
             this.dispatch();
 
+            window.console.log("decode");
             this.clockTick();
             this.decode();
+
+            window.console.log("fetch");
+            this.clockTick();
             this.fetch();
 
 
@@ -210,7 +219,7 @@ class Pipeline {
         var committed: ReOrderBufferEntry[] = [];
 
         var buffer = _cpu.ReOrderBuffer.toArray();
-
+        var numCommited = 0;    //for instrumentation
 
         for (var i in buffer) {
             if ($.isNumeric(buffer[i].value)) {
@@ -219,6 +228,7 @@ class Pipeline {
                     //prevent any branch instructions from overwriting the pc as this is handled by the fetch unit and branch prediction, etc
                     committed.push(buffer[i]); //include it in the commited list anyway so that it gets removed from the ReOrderBuffer by the end of this cycle
                 } else {
+                    numCommited++;
                     committed.push(buffer[i]);
                     _cpu.RegisterFile[buffer[i].destination] = buffer[i].value;
                 }
@@ -230,7 +240,7 @@ class Pipeline {
         if (_cpu.Config.shouldOutputState())
             Display.printArray(committed, "ROB Entries Commited");
 
-        _cpu.Stats.committed(committed.length);
+        _cpu.Stats.committed(numCommited);
 
         for (var j = 0; j < committed.length; j++) {
             _cpu.ReOrderBuffer.removeFirst();

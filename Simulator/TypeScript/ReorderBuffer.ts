@@ -33,11 +33,10 @@ class ReOrderBuffer {
 
     flush(entry: ReOrderBufferEntry) {
         //Removes all the entries in the re-order buffer after the specified instruction
-        window.console.log("flushing: " + entry.toString());
         var index = this._array.indexOf(entry);
         if (index == -1) throw Error("Entry to start flushing from not in the reorder buffer.");
 
-        index = index + 1;
+        index = index + 1;  //to not delete the instruction that caused the flush
         if (index >= this._array.length)
             return;
 
